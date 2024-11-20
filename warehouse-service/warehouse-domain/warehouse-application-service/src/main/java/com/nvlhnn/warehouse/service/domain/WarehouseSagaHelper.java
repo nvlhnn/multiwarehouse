@@ -1,0 +1,40 @@
+package com.nvlhnn.warehouse.service.domain;
+
+import com.nvlhnn.domain.valueobject.ProductId;
+import com.nvlhnn.domain.valueobject.WarehouseId;
+import com.nvlhnn.warehouse.service.domain.entity.Stock;
+import com.nvlhnn.warehouse.service.domain.entity.Warehouse;
+import com.nvlhnn.warehouse.service.domain.exception.WarehouseDomainException;
+import com.nvlhnn.warehouse.service.domain.ports.output.repository.StockRepository;
+import com.nvlhnn.warehouse.service.domain.ports.output.repository.WarehouseRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@Slf4j
+@Component
+public class WarehouseSagaHelper {
+
+    private final WarehouseRepository warehouseRepository;
+    private final StockRepository stockRepository;
+
+    public WarehouseSagaHelper(WarehouseRepository warehouseRepository, StockRepository stockRepository) {
+        this.warehouseRepository = warehouseRepository;
+        this.stockRepository = stockRepository;
+    }
+
+    public Warehouse findWarehouse(String warehouseId) {
+        return warehouseRepository.findById(new WarehouseId(UUID.fromString(warehouseId)))
+                .orElseThrow(() -> new WarehouseDomainException("Warehouse with id " + warehouseId + " not found!"));
+    }
+
+    public Optional<Stock> findStock(String warehouseId, String productId) {
+        return stockRepository.findByWarehouseIdAndProductId(new WarehouseId(UUID.fromString(warehouseId)),new ProductId(UUID.fromString(productId)) );
+    }
+
+    public void saveStock(Stock stock) {
+        stockRepository.save(stock);
+    }
+}

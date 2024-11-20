@@ -1,0 +1,82 @@
+{
+    "namespace": "com.nvlhnn.warehouse.kafka.order.avro.model",
+    "type": "record",
+    "name": "OrderResponseAvroModel",
+    "fields": [
+        {
+            "name": "id",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "name": "sagaId",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "name": "orderId",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "name": "warehouseId",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "name": "createdAt",
+            "type": {
+                "type": "long",
+                "logicalType": "timestamp-millis"
+            }
+        },
+        {
+            "name": "orderStatus",
+            "type": {
+                "type": "enum",
+                "name": "OrderStatus",
+                "symbols": [
+                    "PENDING", "PAID", "APPROVED", "CANCELLING", "CANCELLED"
+                ]
+            }
+        },
+        {
+            "name": "products",
+            "type": {
+                "type": "array",
+                "items": {
+                    "type": "record",
+                    "name": "ProductQuantity",
+                    "fields": [
+                        {
+                            "name": "productId",
+                            "type": {
+                                "type": "string",
+                                "logicalType": "uuid"
+                            }
+                        },
+                        {
+                            "name": "stockId",
+                            "type": {
+                                "type": "string",
+                                "logicalType": "uuid"
+                            }
+                        },
+                        {
+                            "name": "quantity",
+                            "type": "int"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
