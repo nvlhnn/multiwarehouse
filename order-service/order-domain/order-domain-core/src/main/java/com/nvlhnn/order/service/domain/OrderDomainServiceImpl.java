@@ -1,8 +1,11 @@
 package com.nvlhnn.order.service.domain;
 
 import com.nvlhnn.domain.event.publisher.DomainEventPublisher;
+import com.nvlhnn.domain.valueobject.ProductId;
+import com.nvlhnn.domain.valueobject.WarehouseId;
 import com.nvlhnn.order.service.domain.entity.Order;
 import com.nvlhnn.order.service.domain.entity.Product;
+import com.nvlhnn.order.service.domain.entity.User;
 import com.nvlhnn.order.service.domain.entity.Warehouse;
 import com.nvlhnn.order.service.domain.event.OrderCreatedEvent;
 import com.nvlhnn.order.service.domain.exception.OrderDomainException;
@@ -45,5 +48,9 @@ public class OrderDomainServiceImpl implements OrderDomainService {
         }
     }
 
-
+    @Override
+    public void createUser(User user){
+        user.validateUser();
+        log.info("User with email: {} is created", user.getEmail());
+    }
 }

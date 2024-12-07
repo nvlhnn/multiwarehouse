@@ -2,6 +2,7 @@ package com.nvlhnn.order.service.domain;
 
 import com.nvlhnn.domain.event.publisher.DomainEventPublisher;
 import com.nvlhnn.order.service.domain.entity.Order;
+import com.nvlhnn.order.service.domain.entity.User;
 import com.nvlhnn.order.service.domain.entity.Warehouse;
 import com.nvlhnn.order.service.domain.event.OrderCreatedEvent;
 
@@ -12,4 +13,7 @@ public interface OrderDomainService {
                                                DomainEventPublisher<OrderCreatedEvent> orderCreatedEventDomainEventPublisher);
 
     void validateInitialWarehouse(Warehouse warehouse);
+
+    void createUser(User user);
+
 }

@@ -1,0 +1,63 @@
+{
+  "namespace": "com.nvlhnn.user.kafka.avro.model",
+  "type": "record",
+  "name": "UserResponseAvroModel",
+  "fields": [
+    {
+      "name": "id",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "sagaId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "userId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "email",
+      "type": "string"
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "role",
+      "type": {
+        "type": "enum",
+        "name": "UserRole",
+        "symbols": [
+          "CUSTOMER",
+          "WAREHOUSE_ADMIN",
+          "SUPER_ADMIN"
+        ]
+      }
+    },
+    {
+      "name": "token",
+      "type": "string"
+    },
+    {
+      "name": "isActive",
+      "type": "boolean"
+    },
+    {
+      "name": "eventTimestamp",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    }
+  ]
+}

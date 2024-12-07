@@ -48,11 +48,11 @@ spec:
   ports:
     - name: order-service-port
       protocol: TCP
-      port: 8181
+      port: 8182
   type: LoadBalancer
   loadBalancerIP: ""
 ---
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: order-deployment-hpa
@@ -70,7 +70,15 @@ spec:
     - type: Resource
       resource:
         name: cpu
-        targetAverageUtilization: 85
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: AverageValue
+          averageValue: 100Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -93,7 +101,7 @@ spec:
           image: asia-southeast2-docker.pkg.dev/smooth-mason-441314-m5/com-multiwarehouse-app-repository/warehouse.service:1.0-SNAPSHOT
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://postgres-service:5433/multiwarehouse?currentSchema=warehouse&binaryTransfer=true&reWriteBatchedInserts=true&stringtype=unspecified"
+              value: "jdbc:postgresql://postgres-service:5432/multiwarehouse?currentSchema=warehouse&binaryTransfer=true&reWriteBatchedInserts=true&stringtype=unspecified"
             - name: SPRING_DATASOURCE_INITIALIZATION-MODE
               value: "never"
             - name: KAFKA-CONFIG_BOOTSTRAP-SERVERS
@@ -121,11 +129,11 @@ spec:
   ports:
     - name: warehouse-service-port
       protocol: TCP
-      port: 8182
+      port: 8181
   type: LoadBalancer
   loadBalancerIP: ""
 ---
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: warehouse-deployment-hpa
@@ -143,4 +151,12 @@ spec:
     - type: Resource
       resource:
         name: cpu
-        targetAverageUtilization: 85
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: AverageValue
+          averageValue: 100Mi

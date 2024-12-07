@@ -22,6 +22,9 @@ public class OrderEntity {
     private UUID customerId;
     private UUID warehouseId;
     private UUID trackingId;
+    private String city;
+    private Double latitude;
+    private Double longitude;
     private BigDecimal price;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;

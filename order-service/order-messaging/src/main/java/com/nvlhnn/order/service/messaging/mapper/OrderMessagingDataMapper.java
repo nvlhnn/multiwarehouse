@@ -1,7 +1,9 @@
 package com.nvlhnn.order.service.messaging.mapper;
 
+import com.nvlhnn.order.service.domain.dto.message.UserResponseMessage;
 import com.nvlhnn.order.service.domain.entity.Order;
 import com.nvlhnn.order.service.domain.event.OrderCreatedEvent;
+import com.nvlhnn.user.kafka.avro.model.UserResponseAvroModel;
 import com.nvlhnn.warehouse.kafka.order.avro.model.OrderResponseAvroModel;
 import com.nvlhnn.warehouse.kafka.order.avro.model.OrderStatus;
 import com.nvlhnn.warehouse.kafka.order.avro.model.ProductQuantity;
@@ -45,4 +47,17 @@ public class OrderMessagingDataMapper {
             case CANCELLED -> OrderStatus.CANCELLED;
         };
     }
+
+    public UserResponseMessage userAvroModelToUserResponseMessage(UserResponseAvroModel userResponseMessage) {
+        return UserResponseMessage.builder()
+                .email(userResponseMessage.getEmail())
+                .userId(userResponseMessage.getUserId().toString())
+                .name(userResponseMessage.getName())
+                .role(userResponseMessage.getRole().toString())
+                .token(userResponseMessage.getToken())
+                .isActive(userResponseMessage.getIsActive())
+                .eventTimestamp(userResponseMessage.getEventTimestamp())
+                .build();
+    }
+
 }

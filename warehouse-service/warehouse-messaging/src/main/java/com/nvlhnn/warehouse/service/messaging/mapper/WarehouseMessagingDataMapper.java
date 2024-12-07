@@ -1,8 +1,10 @@
 package com.nvlhnn.warehouse.service.messaging.mapper;
 
+import com.nvlhnn.user.kafka.avro.model.UserResponseAvroModel;
 import com.nvlhnn.warehouse.kafka.avro.model.WarehouseCreatedAvroModel;
 import com.nvlhnn.warehouse.kafka.order.avro.model.OrderResponseAvroModel;
 import com.nvlhnn.warehouse.service.domain.dto.message.OrderResponse;
+import com.nvlhnn.warehouse.service.domain.dto.message.UserResponseMessage;
 import com.nvlhnn.warehouse.service.domain.entity.Warehouse;
 import com.nvlhnn.warehouse.service.domain.event.WarehouseCreatedEvent;
 import org.springframework.stereotype.Component;
@@ -46,6 +48,18 @@ public class WarehouseMessagingDataMapper {
                         .setLatitude(warehouse.getStreetAddress().getLatitude())
                         .setLongitude(warehouse.getStreetAddress().getLongitude())
                         .build())
+                .build();
+    }
+
+    public UserResponseMessage userAvroModelToUserResponseMessage(UserResponseAvroModel userResponseMessage) {
+        return UserResponseMessage.builder()
+                .email(userResponseMessage.getEmail())
+                .userId(userResponseMessage.getUserId().toString())
+                .name(userResponseMessage.getName())
+                .role(userResponseMessage.getRole().toString())
+                .token(userResponseMessage.getToken())
+                .isActive(userResponseMessage.getIsActive())
+                .eventTimestamp(userResponseMessage.getEventTimestamp())
                 .build();
     }
 }

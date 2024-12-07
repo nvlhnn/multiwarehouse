@@ -1,8 +1,11 @@
 package com.nvlhnn.warehouse.service.domain.mapper;
 
 import com.nvlhnn.domain.valueobject.ProductId;
+import com.nvlhnn.domain.valueobject.UserId;
+import com.nvlhnn.domain.valueobject.UserRole;
 import com.nvlhnn.domain.valueobject.WarehouseId;
 import com.nvlhnn.warehouse.service.domain.dto.create.*;
+import com.nvlhnn.warehouse.service.domain.dto.message.UserResponseMessage;
 import com.nvlhnn.warehouse.service.domain.entity.Stock;
 import com.nvlhnn.warehouse.service.domain.entity.Warehouse;
 import com.nvlhnn.warehouse.service.domain.valueobject.StreetAddress;
@@ -71,6 +74,17 @@ public class WarehouseDataMapper {
                 .toWarehouseQuantity(toStock)
                 .productId(productId)
                 .message(message)
+                .build();
+    }
+
+    public com.nvlhnn.warehouse.service.domain.entity.User userResponseMessageToUser(UserResponseMessage userResponseMessage) {
+        return com.nvlhnn.warehouse.service.domain.entity.User.builder()
+                .userId(new UserId(UUID.fromString(userResponseMessage.getUserId())))
+                .email(userResponseMessage.getEmail())
+                .name(userResponseMessage.getName())
+                .role(UserRole.valueOf(userResponseMessage.getRole()))
+                .token(userResponseMessage.getToken())
+                .isActive(userResponseMessage.isActive())
                 .build();
     }
 

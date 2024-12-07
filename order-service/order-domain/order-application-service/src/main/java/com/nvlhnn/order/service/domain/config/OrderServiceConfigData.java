@@ -9,4 +9,6 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "order-service")
 public class OrderServiceConfigData {
     private String orderResponseTopicName;
+    private String userRegisteredTopicName;
+
 }

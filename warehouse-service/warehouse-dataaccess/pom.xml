@@ -15,6 +15,11 @@
     <dependencies>
         <dependency>
             <groupId>com.nvlhnn</groupId>
+            <artifactId>common-dataaccess</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nvlhnn</groupId>
             <artifactId>warehouse-application-service</artifactId>
         </dependency>
         <dependency>

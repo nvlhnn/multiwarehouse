@@ -13,6 +13,7 @@
     <artifactId>warehouse-application</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>com.nvlhnn</groupId>
             <artifactId>warehouse-application-service</artifactId>

@@ -10,31 +10,32 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>order-container</artifactId>
+    <artifactId>user-container</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>com.nvlhnn</groupId>
-            <artifactId>order-domain-core</artifactId>
+            <artifactId>user-domain-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.nvlhnn</groupId>
-            <artifactId>order-application-service</artifactId>
+            <artifactId>user-application-service</artifactId>
         </dependency>
         <dependency>
             <groupId>com.nvlhnn</groupId>
-            <artifactId>order-application</artifactId>
-            <version> 1.0-SNAPSHOT</version>
+            <artifactId>user-application</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.nvlhnn</groupId>
-            <artifactId>order-dataaccess</artifactId>
+            <artifactId>user-dataaccess</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.nvlhnn</groupId>
-            <artifactId>order-messaging</artifactId>
-            <version> 1.0-SNAPSHOT</version>
+            <artifactId>user-messaging</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -49,7 +50,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
-                        <name>${project.groupId}/warehouse.service:${project.version}</name>
+                        <name>${project.groupId}/user.service:${project.version}</name>
                     </image>
                 </configuration>
                 <executions>
@@ -63,4 +64,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

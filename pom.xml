@@ -13,6 +13,9 @@
         <module>common</module>
         <module>infrastructure</module>
         <module>order-service</module>
+        <module>user-service</module>
+        <module>product-service</module>
+
     </modules>
 
     <parent>
@@ -123,6 +126,70 @@
             <dependency>
                 <groupId>com.nvlhnn</groupId>
                 <artifactId>order-container</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.nvlhnn</groupId>
+                <artifactId>user-domain-core</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nvlhnn</groupId>
+                <artifactId>user-application-service</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nvlhnn</groupId>
+                <artifactId>user-dataaccess</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nvlhnn</groupId>
+                <artifactId>user-application</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nvlhnn</groupId>
+                <artifactId>user-messaging</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nvlhnn</groupId>
+                <artifactId>user-container</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.nvlhnn</groupId>
+                <artifactId>product-domain-core</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nvlhnn</groupId>
+                <artifactId>product-application-service</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nvlhnn</groupId>
+                <artifactId>product-dataaccess</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nvlhnn</groupId>
+                <artifactId>product-application</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nvlhnn</groupId>
+                <artifactId>product-messaging</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nvlhnn</groupId>
+                <artifactId>product-container</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
         </dependencies>

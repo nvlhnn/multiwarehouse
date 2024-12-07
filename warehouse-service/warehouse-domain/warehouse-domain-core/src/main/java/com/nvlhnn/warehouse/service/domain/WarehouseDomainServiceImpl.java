@@ -119,6 +119,13 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService{
         };
     }
 
+
+    @Override
+    public void createUser(User user){
+        user.validateUser();
+        log.info("User with email: {} is created", user.getEmail());
+    }
+
     private void validateUserAsWarehouseAdmin(User user) {
         if (user == null) {
             throw new WarehouseDomainException("User does not exist.");

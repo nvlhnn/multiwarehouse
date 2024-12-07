@@ -23,5 +23,6 @@ public interface WarehouseDomainService {
 
     StockTransferredEvent transferStock(Warehouse fromWarehouse, Warehouse toWarehouse, Stock fromStock, Optional<Stock> toStock, Product product, int quantity, DomainEventPublisher<StockTransferredEvent> publisher);
 
+    void createUser(User user);
 
 }

@@ -4,12 +4,10 @@ import com.nvlhnn.domain.valueobject.*;
 import com.nvlhnn.order.service.domain.dto.create.CreateOrderCommand;
 import com.nvlhnn.order.service.domain.dto.create.CreateOrderResponse;
 import com.nvlhnn.order.service.domain.dto.create.OrderAddress;
+import com.nvlhnn.order.service.domain.dto.message.UserResponseMessage;
 import com.nvlhnn.order.service.domain.dto.message.WarehouseResponse;
 import com.nvlhnn.order.service.domain.dto.track.TrackOrderResponse;
-import com.nvlhnn.order.service.domain.entity.Order;
-import com.nvlhnn.order.service.domain.entity.OrderItem;
-import com.nvlhnn.order.service.domain.entity.Product;
-import com.nvlhnn.order.service.domain.entity.Warehouse;
+import com.nvlhnn.order.service.domain.entity.*;
 import com.nvlhnn.order.service.domain.valueobject.*;
 import org.springframework.stereotype.Component;
 
@@ -78,5 +76,16 @@ public class OrderDataMapper {
             name(warehouseResponse.getName()).
             active(warehouseResponse.getIsActive()).
             build();
+    }
+
+    public User userResponseMessageToUser(UserResponseMessage userResponseMessage) {
+        return User.builder()
+                .userId(new UserId(UUID.fromString(userResponseMessage.getUserId())))
+                .email(userResponseMessage.getEmail())
+                .name(userResponseMessage.getName())
+                .role(UserRole.valueOf(userResponseMessage.getRole()))
+                .token(userResponseMessage.getToken())
+                .isActive(userResponseMessage.isActive())
+                .build();
     }
 }

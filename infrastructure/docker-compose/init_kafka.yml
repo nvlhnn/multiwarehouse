@@ -12,12 +12,14 @@ services:
       kafka-topics --bootstrap-server kafka-broker-1:9092 --topic warehouse-updated --delete --if-exists
       kafka-topics --bootstrap-server kafka-broker-1:9092 --topic warehouse-stock-updated --delete --if-exists
       kafka-topics --bootstrap-server kafka-broker-1:9092 --topic order-response --delete --if-exists
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --topic user-registered --delete --if-exists
       
       echo -e 'Creating kafka topics'
       kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic warehouse-created  --replication-factor 3 --partitions 3
       kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic warehouse-updated  --replication-factor 3 --partitions 3
       kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic warehouse-stock-updated  --replication-factor 3 --partitions 3
       kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic order-response  --replication-factor 3 --partitions 3
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic user-registered  --replication-factor 3 --partitions 3
       
       echo -e 'Successfully created the following topics:'
       kafka-topics --bootstrap-server kafka-broker-1:9092 --list

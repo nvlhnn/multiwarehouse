@@ -1,6 +1,7 @@
 package com.nvlhnn.application.handler;
 
 
+import com.nvlhnn.application.interceptopr.AuthenticationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -50,6 +51,18 @@ public class GlobalExceptionHandler {
         }
         return errorDTO;
     }
+
+    @ResponseBody
+    @ExceptionHandler(value = {AuthenticationException.class})
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorDTO handleUnauthorized(AuthenticationException ex) {
+        log.warn("Authentication error: {}", ex.getMessage());
+        return ErrorDTO.builder()
+                .code(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+                .message(ex.getMessage())
+                .build();
+    }
+
 
     private String extractViolationsFromException(ConstraintViolationException validationException) {
         return validationException.getConstraintViolations()

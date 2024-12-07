@@ -1,0 +1,4 @@
+package com.nvlhnn.user.service.domain.exception.handler;
+
+public class UserGlobalExceptionHandler {
+}
