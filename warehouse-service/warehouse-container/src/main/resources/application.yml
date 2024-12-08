@@ -12,6 +12,8 @@ warehouse-service:
   order-response-topic-name: order-response
   user-registered-topic-name: user-registered
   product-created-topic-name: product-created
+  stock-created-topic-name: stock-created
+  stock-updated-topic-name: stock-updated
 
 spring:
   jpa:

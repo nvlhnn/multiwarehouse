@@ -82,7 +82,7 @@ public class StockUpdateHelper {
         } else {
             // Update stock if it exists
             StockUpdatedEvent stockUpdatedEvent = warehouseDomainService.updateStock(
-                    existingStock.get(), updateStockCommand.getQuantity(), stockUpdatedEventPublisher
+                    existingStock.get(),updateStockCommand.getQuantity(), stockUpdatedEventPublisher
             );
             saveStock(existingStock.get());
             return stockUpdatedEvent;  // Return the updated event

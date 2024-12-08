@@ -1,6 +1,7 @@
 package com.nvlhnn.warehouse.service.dataaccess.warehouse.adapter;
 
 import com.nvlhnn.domain.valueobject.WarehouseId;
+import com.nvlhnn.warehouse.service.dataaccess.warehouse.entity.WarehouseEntity;
 import com.nvlhnn.warehouse.service.dataaccess.warehouse.mapper.WarehouseDataAccessMapper;
 import com.nvlhnn.warehouse.service.dataaccess.warehouse.repository.WarehouseJpaRepository;
 import com.nvlhnn.warehouse.service.domain.entity.Warehouse;
@@ -31,6 +32,8 @@ public class WarehouseRepositoryImpl implements WarehouseRepository {
 
     @Override
     public Optional<Warehouse> findById(WarehouseId warehouseId){
+        Optional<WarehouseEntity> warehouseEntity = warehouseJpaRepository.findById(warehouseId.getValue());
+
         return warehouseJpaRepository.findById(warehouseId.getValue()).map(warehouseDataAccessMapper::warehouseEntityToWarehouse);
     }
 

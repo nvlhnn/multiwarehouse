@@ -14,5 +14,7 @@ public interface WarehouseRepository {
 
     List<Warehouse> findAll();
 
+
+
     void delete(Warehouse warehouse);
 }

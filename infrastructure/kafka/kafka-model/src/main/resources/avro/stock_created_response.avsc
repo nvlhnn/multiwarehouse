@@ -1,0 +1,68 @@
+{
+    "namespace": "com.nvlhnn.warehouse.kafka.avro.model",
+    "type": "record",
+    "name": "StockCreatedAvroModel",
+    "fields": [
+        {
+            "name": "id",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "name": "sagaId",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "name": "stockId",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },        {
+            "name": "warehouseId",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "name": "productId",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "name": "warehouseName",
+            "type": "string"
+        },
+        {
+            "name": "productName",
+            "type": "string"
+        },
+        {
+            "name": "warehouseLatitude",
+            "type": "double"
+        },
+        {
+            "name": "warehouseLongitude",
+            "type": "double"
+        },
+        {
+            "name": "stock",
+            "type": "int"
+        },
+        {
+            "name": "eventTimestamp",
+            "type": {
+                "type": "long",
+                "logicalType": "timestamp-millis"
+            }
+        }
+    ]
+}

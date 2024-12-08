@@ -72,7 +72,7 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService{
     }
 
     @Override
-    public StockUpdatedEvent updateStock(Stock stock, int quantity, DomainEventPublisher<StockUpdatedEvent> publisher) {
+    public StockUpdatedEvent updateStock(Stock stock,  int quantity, DomainEventPublisher<StockUpdatedEvent> publisher) {
         stock.validateStock(false);
 
         log.info("reducing stock for product id: {} with quantity: {} from current quantity: {} to new quantity: {}",
