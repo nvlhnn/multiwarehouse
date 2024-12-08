@@ -11,6 +11,7 @@ warehouse-service:
   warehouse-stock-updated-topic-name: warehouse-stock-updated
   order-response-topic-name: order-response
   user-registered-topic-name: user-registered
+  product-created-topic-name: product-created
 
 spring:
   jpa:
@@ -56,6 +57,7 @@ kafka-consumer-config:
   value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
   order-response-consumer-group-id: order-topic-consumer
   user-service-consumer-group-id: user-topic-consumer
+  product-service-consumer-group-id: product-topic-consumer
   auto-offset-reset: earliest
   specific-avro-reader-key: specific.avro.reader
   specific-avro-reader: true

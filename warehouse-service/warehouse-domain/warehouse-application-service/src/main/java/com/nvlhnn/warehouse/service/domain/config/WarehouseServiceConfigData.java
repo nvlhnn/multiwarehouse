@@ -13,5 +13,6 @@ public class WarehouseServiceConfigData {
     private String warehouseStockUpdatedTopicName;
     private String orderResponseTopicName;
     private String userRegisteredTopicName;
+    private String productCreatedTopicName;
 
 }

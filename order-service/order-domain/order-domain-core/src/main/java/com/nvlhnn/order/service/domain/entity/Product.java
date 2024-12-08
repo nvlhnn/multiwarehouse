@@ -1,34 +1,31 @@
 package com.nvlhnn.order.service.domain.entity;
 
+import com.nvlhnn.domain.entity.AggregateRoot;
 import com.nvlhnn.domain.entity.BaseEntity;
 import com.nvlhnn.domain.valueobject.Money;
 import com.nvlhnn.domain.valueobject.ProductId;
 
-public class Product extends BaseEntity<ProductId> {
+import java.math.BigDecimal;
+
+public class Product extends AggregateRoot<ProductId> {
+
     private String name;
-    private Money price;
+    private BigDecimal price;
 
-    public Product(ProductId productId, String name, Money price) {
+    public Product(ProductId productId, String name, BigDecimal price) {
         super.setId(productId);
         this.name = name;
         this.price = price;
     }
 
-    public Product(ProductId productId) {
-
-        super.setId(productId);
-    }
-
-    public void updateWithConfirmedNameAndPrice(String name, Money price) {
-        this.name = name;
-        this.price = price;
-    }
+    public  Product(ProductId productId){super.setId(productId);}
 
     public String getName() {
         return name;
     }
 
-    public Money getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 }
+

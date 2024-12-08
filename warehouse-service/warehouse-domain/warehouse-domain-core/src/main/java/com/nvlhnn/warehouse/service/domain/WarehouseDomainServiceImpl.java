@@ -68,7 +68,7 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService{
 
         log.info("Stock with id: {} has been created for product id: {}", stock.getId().getValue(), stock.getProductId());
 
-        return new StockCreatedEvent(stock, ZonedDateTime.now(ZoneId.of(UTC)), publisher);
+        return new StockCreatedEvent(stock, warehouse.getName(), warehouse.getStreetAddress().getLatitude(), warehouse.getStreetAddress().getLongitude(), product.getName(), ZonedDateTime.now(ZoneId.of(UTC)), publisher);
     }
 
     @Override
@@ -85,6 +85,10 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService{
 
         return new StockUpdatedEvent(stock, quantity, ZonedDateTime.now(ZoneId.of(UTC)), publisher);
     }
+
+
+
+
 
     @Override
     public StockTransferredEvent transferStock(Warehouse fromWarehouse,

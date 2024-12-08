@@ -37,6 +37,13 @@ public class WarehouseController {
         return ResponseEntity.ok(createStockResponse);
     }
 
+    @PostMapping("/stocks/apply")
+    public ResponseEntity<CreateStockResponse> updateStock(@RequestBody @Valid CreateUpdateStockCommand updateStockCommand) {
+        CreateStockResponse updateStockResponse = warehouseApplicationService.updateStock(updateStockCommand);
+        log.info("Stock applied with ID: {}", updateStockResponse.getStockId());
+        return ResponseEntity.ok(updateStockResponse);
+    }
+
 //
 //    @PutMapping("/{id}")
 //    public ResponseEntity<CreateWarehouseResponse> updateWarehouse(

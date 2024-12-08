@@ -30,7 +30,10 @@
     <file url="file://$PROJECT_DIR$/product-service/product-application/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/product-service/product-container/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/product-service/product-dataaccess/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/product-service/product-domain/product-application-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/product-service/product-domain/product-domain-core/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/product-service/product-domain/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/product-service/product-domain/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/product-service/product-messaging/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/product-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/product-service/src/main/resources" charset="UTF-8" />

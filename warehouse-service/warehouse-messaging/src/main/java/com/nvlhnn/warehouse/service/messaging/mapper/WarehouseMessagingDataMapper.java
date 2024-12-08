@@ -1,14 +1,17 @@
 package com.nvlhnn.warehouse.service.messaging.mapper;
 
+import com.nvlhnn.product.kafka.avro.model.ProductResponseAvroModel;
 import com.nvlhnn.user.kafka.avro.model.UserResponseAvroModel;
 import com.nvlhnn.warehouse.kafka.avro.model.WarehouseCreatedAvroModel;
 import com.nvlhnn.warehouse.kafka.order.avro.model.OrderResponseAvroModel;
 import com.nvlhnn.warehouse.service.domain.dto.message.OrderResponse;
+import com.nvlhnn.warehouse.service.domain.dto.message.ProductResponseMessage;
 import com.nvlhnn.warehouse.service.domain.dto.message.UserResponseMessage;
 import com.nvlhnn.warehouse.service.domain.entity.Warehouse;
 import com.nvlhnn.warehouse.service.domain.event.WarehouseCreatedEvent;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -61,5 +64,17 @@ public class WarehouseMessagingDataMapper {
                 .isActive(userResponseMessage.getIsActive())
                 .eventTimestamp(userResponseMessage.getEventTimestamp())
                 .build();
+    }
+
+    public ProductResponseMessage productResponseMessageToProduct(ProductResponseAvroModel productResponseAvroModel) {
+        return ProductResponseMessage.builder()
+                .id(productResponseAvroModel.getId().toString())
+                .sagaId(productResponseAvroModel.getSagaId().toString())
+                .productId(productResponseAvroModel.getProductId().toString())
+                .name(productResponseAvroModel.getName())
+                .price(new BigDecimal(productResponseAvroModel.getPrice()))
+                .eventTimestamp(productResponseAvroModel.getEventTimestamp())
+                .build();
+
     }
 }

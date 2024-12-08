@@ -7,6 +7,7 @@ import com.nvlhnn.user.service.domain.entity.User;
 import com.nvlhnn.user.service.domain.event.UserCreatedEvent;
 import com.nvlhnn.user.service.domain.exception.UserDomainException;
 import com.nvlhnn.user.service.domain.mapper.UserDataMapper;
+import com.nvlhnn.user.service.domain.ports.output.message.publisher.UserCreatedEventPublisher;
 import com.nvlhnn.user.service.domain.ports.output.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,13 +20,16 @@ public class UserHelper {
     private final UserDomainService userDomainService;
     private final UserRepository userRepository;
     private final UserDataMapper userDataMapper;
+    private final UserCreatedEventPublisher userCreatedEventPublisher;
 
     public UserHelper(UserDomainService userDomainService,
                       UserRepository userRepository,
-                      UserDataMapper userDataMapper) {
+                      UserDataMapper userDataMapper,
+                      UserCreatedEventPublisher userCreatedEventPublisher) {
         this.userDomainService = userDomainService;
         this.userRepository = userRepository;
         this.userDataMapper = userDataMapper;
+        this.userCreatedEventPublisher = userCreatedEventPublisher;
     }
 
     @Transactional
@@ -37,7 +41,7 @@ public class UserHelper {
             throw new UserDomainException("User already exists.");
         }
 
-        UserCreatedEvent userCreatedEvent = userDomainService.createUser(user, null); // Event publishing can be added later
+        UserCreatedEvent userCreatedEvent = userDomainService.createUser(user, userCreatedEventPublisher); // Event publishing can be added later
         saveUser(user);
         log.info("User with email: {} has been successfully registered", user.getEmail());
         return userCreatedEvent;

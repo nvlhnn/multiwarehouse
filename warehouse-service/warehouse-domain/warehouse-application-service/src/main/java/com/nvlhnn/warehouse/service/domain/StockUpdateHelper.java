@@ -3,12 +3,19 @@ package com.nvlhnn.warehouse.service.domain;
 import com.nvlhnn.domain.valueobject.ProductId;
 import com.nvlhnn.domain.valueobject.WarehouseId;
 import com.nvlhnn.warehouse.service.domain.dto.create.CreateUpdateStockCommand;
+import com.nvlhnn.warehouse.service.domain.entity.Product;
 import com.nvlhnn.warehouse.service.domain.entity.Stock;
+import com.nvlhnn.warehouse.service.domain.entity.Warehouse;
+import com.nvlhnn.warehouse.service.domain.event.StockCreatedEvent;
+import com.nvlhnn.warehouse.service.domain.event.StockEvent;
 import com.nvlhnn.warehouse.service.domain.event.StockUpdatedEvent;
 import com.nvlhnn.warehouse.service.domain.exception.WarehouseDomainException;
 import com.nvlhnn.warehouse.service.domain.mapper.WarehouseDataMapper;
+import com.nvlhnn.warehouse.service.domain.ports.output.message.publisher.StockCreatedEventPublisher;
 import com.nvlhnn.warehouse.service.domain.ports.output.message.publisher.StockUpdatedEventPublisher;
+import com.nvlhnn.warehouse.service.domain.ports.output.repository.ProductRepository;
 import com.nvlhnn.warehouse.service.domain.ports.output.repository.StockRepository;
+import com.nvlhnn.warehouse.service.domain.ports.output.repository.WarehouseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,35 +31,64 @@ public class StockUpdateHelper {
     private final StockRepository stockRepository;
     private final WarehouseDataMapper warehouseDataMapper;
     private final StockUpdatedEventPublisher stockUpdatedEventPublisher;
+    private final WarehouseRepository warehouseRepository;
+    private final ProductRepository productRepository;
+    private final StockCreatedEventPublisher stockCreatedEventPublisher;
 
     public StockUpdateHelper(WarehouseDomainService warehouseDomainService,
                              StockRepository stockRepository,
+                             WarehouseRepository warehouseRepository,
+                             ProductRepository productRepository,
                              WarehouseDataMapper warehouseDataMapper,
+                             StockCreatedEventPublisher stockCreatedEventPublisher,
                              StockUpdatedEventPublisher stockUpdatedEventPublisher) {
         this.warehouseDomainService = warehouseDomainService;
         this.stockRepository = stockRepository;
+        this.warehouseRepository = warehouseRepository;
+        this.productRepository = productRepository;
         this.warehouseDataMapper = warehouseDataMapper;
+        this.stockCreatedEventPublisher = stockCreatedEventPublisher;
         this.stockUpdatedEventPublisher = stockUpdatedEventPublisher;
     }
 
     @Transactional
-    public StockUpdatedEvent processStockUpdate(CreateUpdateStockCommand updateStockCommand) {
-        Stock stock = getStock(updateStockCommand.getProductId(), updateStockCommand.getWarehouseId());
+    public StockEvent processStockUpdate(CreateUpdateStockCommand updateStockCommand) {
 
-        StockUpdatedEvent stockUpdatedEvent = warehouseDomainService.updateStock(stock, updateStockCommand.getQuantity(),
-                stockUpdatedEventPublisher);
+        // Validate warehouse and product existence
+        Optional<Warehouse> warehouse = warehouseRepository.findById(new WarehouseId(updateStockCommand.getWarehouseId()));
+        if (!warehouse.isPresent()) {
+            log.warn("Warehouse not found with id: {}", updateStockCommand.getWarehouseId());
+            throw new WarehouseDomainException("Warehouse not found.");
+        }
 
-        saveStock(stock);
-        return stockUpdatedEvent;
+        Optional<Product> product = productRepository.findById(new ProductId(updateStockCommand.getProductId()));
+        if (!product.isPresent()) {
+            log.warn("Product not found with id: {}", updateStockCommand.getProductId());
+            throw new WarehouseDomainException("Product not found.");
+        }
+
+        // Check if stock exists (findByWarehouseIdAndProductId)
+        Optional<Stock> existingStock = stockRepository.findByWarehouseIdAndProductId(
+                new WarehouseId(updateStockCommand.getWarehouseId()),
+                new ProductId(updateStockCommand.getProductId())
+        );
+
+        if (!existingStock.isPresent()) {
+            // Create new stock if it doesn't exist
+            Stock stock = warehouseDataMapper.createStockFromCreateUpdateStockCommand(updateStockCommand);
+            StockCreatedEvent stockCreatedEvent = warehouseDomainService.createStock(stock, warehouse.get(), product.get(), stockCreatedEventPublisher);
+            saveStock(stock);
+            return stockCreatedEvent;  // Return the created event
+        } else {
+            // Update stock if it exists
+            StockUpdatedEvent stockUpdatedEvent = warehouseDomainService.updateStock(
+                    existingStock.get(), updateStockCommand.getQuantity(), stockUpdatedEventPublisher
+            );
+            saveStock(existingStock.get());
+            return stockUpdatedEvent;  // Return the updated event
+        }
     }
 
-    private Stock getStock(UUID productId, UUID warehouseId) {
-        return stockRepository.findByWarehouseIdAndProductId(new WarehouseId(warehouseId), new ProductId(productId))
-                .orElseThrow(() -> {
-                    log.warn("Stock not found for product id: {} in warehouse id: {}", productId, warehouseId);
-                    return new WarehouseDomainException("Stock not found.");
-                });
-    }
 
     private void saveStock(Stock stock) {
         Stock savedStock = stockRepository.save(stock);

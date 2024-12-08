@@ -21,7 +21,6 @@ public class CreateUpdateStockCommand {
     private final UUID productId;
 
     @NotNull
-    @Min(1)
     private final int quantity;
 
 

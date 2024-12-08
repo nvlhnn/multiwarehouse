@@ -4,6 +4,7 @@ import com.nvlhnn.domain.valueobject.*;
 import com.nvlhnn.order.service.domain.dto.create.CreateOrderCommand;
 import com.nvlhnn.order.service.domain.dto.create.CreateOrderResponse;
 import com.nvlhnn.order.service.domain.dto.create.OrderAddress;
+import com.nvlhnn.order.service.domain.dto.message.ProductResponseMessage;
 import com.nvlhnn.order.service.domain.dto.message.UserResponseMessage;
 import com.nvlhnn.order.service.domain.dto.message.WarehouseResponse;
 import com.nvlhnn.order.service.domain.dto.track.TrackOrderResponse;
@@ -87,5 +88,13 @@ public class OrderDataMapper {
                 .token(userResponseMessage.getToken())
                 .isActive(userResponseMessage.isActive())
                 .build();
+    }
+
+    public Product productResponseMessageToProduct(ProductResponseMessage productResponseMessage) {
+        return new Product(
+                new ProductId(UUID.fromString(productResponseMessage.getProductId())),
+                productResponseMessage.getName(),
+                productResponseMessage.getPrice()
+        );
     }
 }

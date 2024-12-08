@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ public class ProductEntity {
     @Id
     private UUID id;
     private String name;
+    private BigDecimal price;
 
     @Override
     public boolean equals(Object o) {

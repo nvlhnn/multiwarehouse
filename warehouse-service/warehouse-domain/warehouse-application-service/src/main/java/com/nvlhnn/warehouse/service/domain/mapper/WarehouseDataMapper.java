@@ -5,7 +5,9 @@ import com.nvlhnn.domain.valueobject.UserId;
 import com.nvlhnn.domain.valueobject.UserRole;
 import com.nvlhnn.domain.valueobject.WarehouseId;
 import com.nvlhnn.warehouse.service.domain.dto.create.*;
+import com.nvlhnn.warehouse.service.domain.dto.message.ProductResponseMessage;
 import com.nvlhnn.warehouse.service.domain.dto.message.UserResponseMessage;
+import com.nvlhnn.warehouse.service.domain.entity.Product;
 import com.nvlhnn.warehouse.service.domain.entity.Stock;
 import com.nvlhnn.warehouse.service.domain.entity.Warehouse;
 import com.nvlhnn.warehouse.service.domain.valueobject.StreetAddress;
@@ -51,6 +53,14 @@ public class WarehouseDataMapper {
 
     }
 
+    public Stock createStockFromCreateUpdateStockCommand(CreateUpdateStockCommand createUpdateStockCommand){
+        return Stock.builder()
+                .warehouseId(new WarehouseId(createUpdateStockCommand.getWarehouseId()))
+                .productId(new ProductId(createUpdateStockCommand.getProductId()))
+                .quantity(createUpdateStockCommand.getQuantity())
+                .build();
+    }
+
     public CreateWarehouseResponse warehouseToCreateWarehouseResponse(Warehouse warehouse, String message){
         return CreateWarehouseResponse.builder()
                 .warehouseId(warehouse.getId().getValue())
@@ -86,6 +96,14 @@ public class WarehouseDataMapper {
                 .token(userResponseMessage.getToken())
                 .isActive(userResponseMessage.isActive())
                 .build();
+    }
+
+    public Product productResponseMessageToProduct(ProductResponseMessage productResponseMessage) {
+        return new Product(
+                new ProductId(UUID.fromString(productResponseMessage.getProductId())),
+                productResponseMessage.getName(),
+                productResponseMessage.getPrice()
+        );
     }
 
 }

@@ -12,13 +12,15 @@ public class ProductDataAccessMapper {
         return ProductEntity.builder()
                 .id(product.getId().getValue())
                 .name(product.getName())
+                .price(product.getPrice())
                 .build();
     }
 
     public Product productEntityToProductDataMapper(ProductEntity productEntity) {
         return new Product(
                 new ProductId(productEntity.getId()),
-                productEntity.getName()
+                productEntity.getName(),
+                productEntity.getPrice()
         );
 
     }
