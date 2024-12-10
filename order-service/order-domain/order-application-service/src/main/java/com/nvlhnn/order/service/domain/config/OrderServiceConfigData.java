@@ -11,5 +11,7 @@ public class OrderServiceConfigData {
     private String orderResponseTopicName;
     private String userRegisteredTopicName;
     private String productCreatedTopicName;
+    private String stockCreatedTopicName;
+    private String stockUpdatedTopicName;
 
 }

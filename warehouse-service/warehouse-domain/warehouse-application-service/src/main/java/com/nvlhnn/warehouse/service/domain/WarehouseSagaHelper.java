@@ -12,6 +12,7 @@ import com.nvlhnn.warehouse.service.domain.ports.output.repository.WarehouseRepo
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,6 +42,12 @@ public class WarehouseSagaHelper {
     public Optional<Stock> findStock(String warehouseId, String productId) {
         return stockRepository.findByWarehouseIdAndProductId(new WarehouseId(UUID.fromString(warehouseId)),new ProductId(UUID.fromString(productId)) );
     }
+
+    // findByProductIdIn
+    public Optional<List<Stock>> findByProductIdIn(List<ProductId> productIds){
+        return stockRepository.findByProductIdIn(productIds);
+    }
+
 
     public void saveStock(Stock stock) {
         stockRepository.save(stock);

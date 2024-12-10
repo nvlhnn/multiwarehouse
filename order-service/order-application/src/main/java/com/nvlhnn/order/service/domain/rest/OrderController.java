@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.net.http.HttpRequest;
 import java.util.UUID;
 
 @Slf4j
@@ -23,10 +25,9 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateOrderResponse> createOrder(@RequestBody CreateOrderCommand createOrderCommand) {
-        log.info("Creating order for customer: {} at warehouse: {}", createOrderCommand.getCustomerId(),
-                createOrderCommand.getWarehouseId());
-        CreateOrderResponse createOrderResponse = orderApplicationService.createOrder(createOrderCommand);
+    public ResponseEntity<CreateOrderResponse> createOrder(@RequestBody CreateOrderCommand createOrderCommand, HttpServletRequest request) {
+        log.info("Creating order");
+        CreateOrderResponse createOrderResponse = orderApplicationService.createOrder(createOrderCommand, request);
         log.info("Order created with tracking id: {}", createOrderResponse.getOrderTrackingId());
         return ResponseEntity.ok(createOrderResponse);
     }

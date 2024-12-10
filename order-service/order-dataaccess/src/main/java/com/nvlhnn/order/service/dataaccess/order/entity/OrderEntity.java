@@ -19,7 +19,7 @@ import java.util.UUID;
 public class OrderEntity {
     @Id
     private UUID id;
-    private UUID customerId;
+    private UUID userId;
     private UUID warehouseId;
     private UUID trackingId;
     private String city;

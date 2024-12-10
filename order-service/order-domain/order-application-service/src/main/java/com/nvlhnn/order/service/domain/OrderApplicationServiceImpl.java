@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import javax.servlet.http.HttpServletRequest;
+import java.net.http.HttpRequest;
+
 @Slf4j
 @Validated
 @Service
@@ -25,8 +28,8 @@ class OrderApplicationServiceImpl implements OrderApplicationService {
     }
 
     @Override
-    public CreateOrderResponse createOrder(CreateOrderCommand createOrderCommand) {
-        return orderCreateCommandHandler.createOrder(createOrderCommand);
+    public CreateOrderResponse createOrder(CreateOrderCommand createOrderCommand, HttpServletRequest request) {
+        return orderCreateCommandHandler.createOrder(createOrderCommand, request);
     }
 
     @Override

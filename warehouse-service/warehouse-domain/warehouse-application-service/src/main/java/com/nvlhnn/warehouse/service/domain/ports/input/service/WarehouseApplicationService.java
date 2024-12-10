@@ -11,6 +11,8 @@ public interface WarehouseApplicationService {
 
     CreateWarehouseResponse updateWarehouse(@Valid CreateUpdateWarehouseCommand updateWarehouseCommand);
 
+    WarehouseListResponse listWarehouses(int page, int size);
+
 //    AssignAdminResponse assignWarehouseAdmin(@Valid AssignAdminCommand assignAdminCommand);
 
     CreateTransferStockResponse transferStock(@Valid CreateTransferStockCommand stockTransferCommand);

@@ -4,9 +4,7 @@ import com.nvlhnn.domain.valueobject.*;
 import com.nvlhnn.order.service.domain.dto.create.CreateOrderCommand;
 import com.nvlhnn.order.service.domain.dto.create.CreateOrderResponse;
 import com.nvlhnn.order.service.domain.dto.create.OrderAddress;
-import com.nvlhnn.order.service.domain.dto.message.ProductResponseMessage;
-import com.nvlhnn.order.service.domain.dto.message.UserResponseMessage;
-import com.nvlhnn.order.service.domain.dto.message.WarehouseResponse;
+import com.nvlhnn.order.service.domain.dto.message.*;
 import com.nvlhnn.order.service.domain.dto.track.TrackOrderResponse;
 import com.nvlhnn.order.service.domain.entity.*;
 import com.nvlhnn.order.service.domain.valueobject.*;
@@ -21,10 +19,10 @@ import java.util.stream.Collectors;
 public class OrderDataMapper {
 
 
-    public Order createOrderCommandToOrder(CreateOrderCommand createOrderCommand) {
+    public Order createOrderCommandToOrder(CreateOrderCommand createOrderCommand, Warehouse nearestWarehouse, User user) {
         return Order.builder()
-                .customerId(new CustomerId(createOrderCommand.getCustomerId()))
-                .warehouseId(new WarehouseId(createOrderCommand.getWarehouseId()))
+                .userId(user.getId())
+                .warehouseId(nearestWarehouse.getId())
                 .deliveryAddress(orderAddressToStreetAddress(createOrderCommand.getAddress()))
                 .price(new Money(createOrderCommand.getPrice()))
                 .items(orderItemsToOrderItemEntities(createOrderCommand.getItems()))
@@ -76,6 +74,9 @@ public class OrderDataMapper {
             warehouseId(new WarehouseId(UUID.fromString(warehouseResponse.getWarehoudId()))).
             name(warehouseResponse.getName()).
             active(warehouseResponse.getIsActive()).
+            city(warehouseResponse.getCity()).
+            latitude(warehouseResponse.getLatitude()).
+            longitude(warehouseResponse.getLongitude()).
             build();
     }
 
@@ -97,4 +98,39 @@ public class OrderDataMapper {
                 productResponseMessage.getPrice()
         );
     }
+    public Warehouse stockCreatedResponseMessageToWarehouse(StockCreatedResponseMessage stockCreatedResponseMessage) {
+        return Warehouse.builder()
+                .warehouseId(new WarehouseId(UUID.fromString(stockCreatedResponseMessage.getWarehouseId())))
+                .name(stockCreatedResponseMessage.getWarehouseName())
+                .latitude(stockCreatedResponseMessage.getWarehouseLatitude())
+                .longitude(stockCreatedResponseMessage.getWarehouseLongitude())
+                .products(List.of(
+                        new Product(
+                                new ProductId(UUID.fromString(stockCreatedResponseMessage.getProductId())),
+                                stockCreatedResponseMessage.getProductName(),
+                                null
+                        )
+                ))
+                .build();
+    }
+
+
+    public Stock stockCreatedResponseMessageToStock(StockCreatedResponseMessage stockCreatedResponseMessage) {
+        return new Stock(
+                new StockId(UUID.fromString(stockCreatedResponseMessage.getStockId())),
+                new WarehouseId(UUID.fromString(stockCreatedResponseMessage.getWarehouseId())),
+                new ProductId(UUID.fromString(stockCreatedResponseMessage.getProductId())),
+                stockCreatedResponseMessage.getStock()
+        );
+    }
+
+    public Stock stockUpdatedResponseMessageToStock(StockUpdatedResponseMessage stockUpdatedResponseMessage) {
+        return new Stock(
+                new StockId(UUID.fromString(stockUpdatedResponseMessage.getStockId())),
+                new WarehouseId(UUID.fromString(stockUpdatedResponseMessage.getWarehouseId())),
+                new ProductId(UUID.fromString(stockUpdatedResponseMessage.getProductId())),
+                stockUpdatedResponseMessage.getStock()
+        );
+    }
+
 }

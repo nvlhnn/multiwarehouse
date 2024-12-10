@@ -21,9 +21,5 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/orders/**");
-
-        // Register RoleInterceptor to check the role of the user
-        registry.addInterceptor(roleInterceptor)
-                .addPathPatterns("/orders/**");
     }
 }

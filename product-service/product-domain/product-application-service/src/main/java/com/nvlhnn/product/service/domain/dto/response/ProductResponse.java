@@ -25,6 +25,5 @@ public class ProductResponse {
     @NotNull
     private final Integer totalStock;
 
-    @NotNull
     private final String message;
 }

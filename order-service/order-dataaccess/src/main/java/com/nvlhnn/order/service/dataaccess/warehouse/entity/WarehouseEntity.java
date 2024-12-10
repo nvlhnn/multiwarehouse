@@ -18,6 +18,9 @@ public class WarehouseEntity {
     private UUID id;
     private String name;
     private Boolean isActive;
+    private String city;
+    private Double latitude;
+    private Double longitude;
 
     @Override
     public boolean equals(Object o) {

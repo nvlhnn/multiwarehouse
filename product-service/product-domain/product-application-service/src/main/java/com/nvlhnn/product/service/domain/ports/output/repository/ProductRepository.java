@@ -1,10 +1,10 @@
-
 package com.nvlhnn.product.service.domain.ports.output.repository;
 
 import com.nvlhnn.domain.valueobject.ProductId;
 import com.nvlhnn.product.service.domain.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository {
@@ -13,6 +13,5 @@ public interface ProductRepository {
 
     Optional<Product> findById(ProductId productId);
 
-
-    List<Product> findAll();
+    Page<Product> findAll(Pageable pageable); // Updated for pagination
 }

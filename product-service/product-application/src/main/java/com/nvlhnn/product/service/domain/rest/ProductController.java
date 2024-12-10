@@ -1,6 +1,7 @@
 package com.nvlhnn.product.service.domain.rest;
 
 import com.nvlhnn.product.service.domain.dto.post.CreateProductCommand;
+import com.nvlhnn.product.service.domain.dto.response.ProductListResponse;
 import com.nvlhnn.product.service.domain.dto.response.ProductResponse;
 import com.nvlhnn.product.service.domain.ports.input.service.ProductApplicationService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,5 +29,12 @@ public class ProductController {
         return ResponseEntity.ok(productResponse);
     }
 
-
+    // list products
+    @GetMapping()
+    public ResponseEntity<ProductListResponse> listProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        ProductListResponse response = productApplicationService.listProducts(page, size);
+        return ResponseEntity.ok(response);
+    }
 }

@@ -15,6 +15,9 @@ public class WarehouseResponse {
     private final String sagaId;
     private final String warehoudId;
     private final String name;
+    private final String city;
+    private final Double latitude;
+    private final Double longitude;
     private final Boolean isActive;
 
     private final Instant eventTimestamp;

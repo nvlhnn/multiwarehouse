@@ -16,10 +16,12 @@ public class WarehouseApplicationServiceImpl implements WarehouseApplicationServ
     private final StockCreateCommandHandler stockCreateCommandHandler;
     private final StockTransferCommandHandler stockTransferCommandHandler;
     private final StockUpdateCommandHandler stockUpdateCommandHandler;
+    private final WarehouseListCommandHandler warehouseListCommandHandler;
 
     public WarehouseApplicationServiceImpl(WarehouseCreateCommandHandler warehouseCreateCommandHandler,
                                            WarehouseUpdateCommandHandler warehouseUpdateCommandHandler,
                                            StockCreateCommandHandler stockCreateCommandHandler,
+                                           WarehouseListCommandHandler warehouseListCommandHandler,
                                            StockTransferCommandHandler stockTransferCommandHandler,
                                            StockUpdateCommandHandler stockUpdateCommandHandler) {
         this.warehouseCreateCommandHandler = warehouseCreateCommandHandler;
@@ -27,6 +29,7 @@ public class WarehouseApplicationServiceImpl implements WarehouseApplicationServ
         this.stockCreateCommandHandler = stockCreateCommandHandler;
         this.stockTransferCommandHandler = stockTransferCommandHandler;
         this.stockUpdateCommandHandler = stockUpdateCommandHandler;
+        this.warehouseListCommandHandler = warehouseListCommandHandler;
     }
 
     @Override
@@ -39,6 +42,12 @@ public class WarehouseApplicationServiceImpl implements WarehouseApplicationServ
     public CreateWarehouseResponse updateWarehouse(CreateUpdateWarehouseCommand updateWarehouseCommand) {
         log.info("Updating warehouse with id: {}", updateWarehouseCommand.getWarehouseId());
         return warehouseUpdateCommandHandler.updateWarehouse(updateWarehouseCommand);
+    }
+
+    @Override
+    public WarehouseListResponse listWarehouses(int page, int size) {
+        log.info("Listing warehouses for page: {} with size: {}", page, size);
+        return warehouseListCommandHandler.listWarehouses(page, size);
     }
 
     @Override

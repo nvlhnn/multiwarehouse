@@ -1,11 +1,13 @@
 package com.nvlhnn.order.service.messaging.mapper;
 
-import com.nvlhnn.order.service.domain.dto.message.ProductResponseMessage;
-import com.nvlhnn.order.service.domain.dto.message.UserResponseMessage;
+import com.nvlhnn.order.service.domain.dto.message.*;
 import com.nvlhnn.order.service.domain.entity.Order;
 import com.nvlhnn.order.service.domain.event.OrderCreatedEvent;
 import com.nvlhnn.product.kafka.avro.model.ProductResponseAvroModel;
 import com.nvlhnn.user.kafka.avro.model.UserResponseAvroModel;
+import com.nvlhnn.warehouse.kafka.avro.model.StockCreatedAvroModel;
+import com.nvlhnn.warehouse.kafka.avro.model.StockUpdatedAvroModel;
+import com.nvlhnn.warehouse.kafka.avro.model.WarehouseCreatedAvroModel;
 import com.nvlhnn.warehouse.kafka.order.avro.model.OrderResponseAvroModel;
 import com.nvlhnn.warehouse.kafka.order.avro.model.OrderStatus;
 import com.nvlhnn.warehouse.kafka.order.avro.model.ProductQuantity;
@@ -73,6 +75,49 @@ public class OrderMessagingDataMapper {
                 .eventTimestamp(productResponseAvroModel.getEventTimestamp())
                 .build();
 
+    }
+
+    public WarehouseResponse warehouseCreatedAvroModelToWarehouseResponse(WarehouseCreatedAvroModel warehouseCreatedAvroModel) {
+        return WarehouseResponse.builder()
+                .id(warehouseCreatedAvroModel.getId().toString())
+                .sagaId(warehouseCreatedAvroModel.getSagaId().toString())
+                .warehoudId(warehouseCreatedAvroModel.getWarehouseId().toString())
+                .name(warehouseCreatedAvroModel.getName())
+                .city(warehouseCreatedAvroModel.getAddress().getCity())
+                .latitude(warehouseCreatedAvroModel.getAddress().getLatitude())
+                .longitude(warehouseCreatedAvroModel.getAddress().getLongitude())
+                .isActive(warehouseCreatedAvroModel.getIsActive())
+                .eventTimestamp(warehouseCreatedAvroModel.getCreatedAt())
+                .build();
+
+    }
+
+    public StockCreatedResponseMessage stockCreatedAvroModelToStockCreatedResponseMessage(StockCreatedAvroModel stockCreatedAvroModel) {
+        return StockCreatedResponseMessage.builder()
+                .id(stockCreatedAvroModel.getId().toString())
+                .sagaId(stockCreatedAvroModel.getSagaId().toString())
+                .stockId(stockCreatedAvroModel.getStockId().toString())
+                .warehouseId(stockCreatedAvroModel.getWarehouseId().toString())
+                .productId(stockCreatedAvroModel.getProductId().toString())
+                .warehouseName(stockCreatedAvroModel.getWarehouseName())
+                .productName(stockCreatedAvroModel.getProductName())
+                .warehouseLongitude(stockCreatedAvroModel.getWarehouseLongitude())
+                .warehouseLatitude(stockCreatedAvroModel.getWarehouseLatitude())
+                .stock(stockCreatedAvroModel.getStock())
+                .eventTimestamp(stockCreatedAvroModel.getEventTimestamp())
+                .build();
+    }
+
+    public StockUpdatedResponseMessage stockUpdatedAvroModelToStockUpdatedResponseMessage(StockUpdatedAvroModel stockUpdatedAvroModel) {
+        return StockUpdatedResponseMessage.builder()
+                .id(stockUpdatedAvroModel.getId().toString())
+                .sagaId(stockUpdatedAvroModel.getSagaId().toString())
+                .stockId(stockUpdatedAvroModel.getStockId().toString())
+                .warehouseId(stockUpdatedAvroModel.getWarehouseId().toString())
+                .productId(stockUpdatedAvroModel.getProductId().toString())
+                .stock(stockUpdatedAvroModel.getStock())
+                .eventTimestamp(stockUpdatedAvroModel.getEventTimestamp())
+                .build();
     }
 
 }

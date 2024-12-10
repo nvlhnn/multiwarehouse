@@ -34,4 +34,11 @@ public class WarehouseRepositoryImpl implements WarehouseRepository {
         warehouseJpaRepository.save(warehouseDataAccessMapper.warehouseToWarehouseEntity(warehouse));
     }
 
+    @Override
+    public Optional<Warehouse> findNearestLocation(double latitude, double longitude) {
+        return warehouseJpaRepository.findNearestLocation(latitude, longitude).map(warehouseDataAccessMapper::warehouseEntityToWarehouse);
+    }
+
+
+
 }

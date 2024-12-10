@@ -25,7 +25,7 @@ public class OrderDataAccessMapper {
     public OrderEntity orderToOrderEntity(Order order) {
         OrderEntity orderEntity = OrderEntity.builder()
                 .id(order.getId().getValue())
-                .customerId(order.getCustomerId().getValue())
+                .userId(order.getUserId().getValue())
                 .warehouseId(order.getWarehouseId().getValue())
                 .trackingId(order.getTrackingId().getValue())
                 .address(deliveryAddressToAddressEntity(order.getDeliveryAddress()))
@@ -44,7 +44,7 @@ public class OrderDataAccessMapper {
     public Order orderEntityToOrder(OrderEntity orderEntity) {
         return Order.builder()
                 .orderId(new OrderId(orderEntity.getId()))
-                .customerId(new CustomerId(orderEntity.getCustomerId()))
+                .userId(new UserId(orderEntity.getUserId()))
                 .warehouseId(new WarehouseId(orderEntity.getWarehouseId()))
                 .deliveryAddress(addressEntityToDeliveryAddress(orderEntity.getAddress()))
                 .price(new Money(orderEntity.getPrice()))

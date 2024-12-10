@@ -6,12 +6,16 @@ import com.nvlhnn.order.service.domain.exception.OrderDomainException;
 import com.nvlhnn.order.service.domain.valueobject.OrderItemId;
 import com.nvlhnn.order.service.domain.valueobject.StreetAddress;
 import com.nvlhnn.order.service.domain.valueobject.TrackingId;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+@Slf4j
 public class Order extends AggregateRoot<OrderId> {
-    private final CustomerId customerId;
+    private final UserId userId;
     private final WarehouseId warehouseId;
     private final StreetAddress deliveryAddress;
     private final Money price;
@@ -107,6 +111,78 @@ public class Order extends AggregateRoot<OrderId> {
 //        }
     }
 
+
+    public void validateOrderItems(List<Stock> stocks) {
+
+        for (OrderItem orderItem: items) {
+            // count total total stock with product id in orderItem
+            int totalStock = stocks.stream()
+                    .filter(stock -> stock.getProductId().equals(orderItem.getProduct().getId()))
+                    .mapToInt(Stock::getQuantity)
+                    .sum();
+            if (orderItem.getQuantity() > totalStock) {
+                throw new OrderDomainException("Order item quantity: " + orderItem.getQuantity() +
+                        " is greater than total stock: " + totalStock + " for product " + orderItem.getProduct().getId().getValue());
+            }
+
+        }
+    }
+
+    public List<Stock> findAndTransferStock(WarehouseId nearestWarehouseId, List<Stock> stocks, ProductId productId, int requiredQuantity) {
+        // List to store all stock objects that are reduced
+        List<Stock> stockChanges = new java.util.ArrayList<>();
+
+        // First, check the stock in the nearest warehouse
+        Stock nearestWarehouseStock = findStockInWarehouse(nearestWarehouseId, productId, stocks);
+        int stockInNearestWarehouse = nearestWarehouseStock != null ? nearestWarehouseStock.getQuantity() : 0;
+
+        // If the nearest warehouse has enough stock, no need for transfer from others
+        if (stockInNearestWarehouse >= requiredQuantity) {
+            nearestWarehouseStock.updateQuantity(nearestWarehouseStock.getQuantity() - requiredQuantity);
+            stockChanges.add(new Stock(nearestWarehouseStock.getId(), nearestWarehouseId, productId, -requiredQuantity));  // Add the reduced stock to list
+            return stockChanges;
+        }
+
+        // If not enough stock in nearest warehouse, calculate remaining stock needed
+        int remainingStockNeeded = requiredQuantity - stockInNearestWarehouse;
+
+        // Add the reduced stock from nearest warehouse to stockChanges
+        if (stockInNearestWarehouse > 0) {
+            nearestWarehouseStock.updateQuantity(0); // Reducing all stock in nearest warehouse
+            stockChanges.add(new Stock(nearestWarehouseStock.getId(), nearestWarehouseId, productId, -stockInNearestWarehouse));
+        }
+
+        // Gather available stocks from other warehouses (exclude the nearest warehouse)
+        List<Stock> stocksToReduce = stocks.stream()
+                .filter(stock -> stock.getProductId().equals(productId))  // Filter by product
+                .filter(stock -> !stock.getWarehouseId().equals(nearestWarehouseId))  // Exclude nearest warehouse
+                .filter(stock -> stock.getQuantity() > 0)  // Only consider warehouses with stock available
+                .sorted((stock1, stock2) -> Integer.compare(stock2.getQuantity(), stock1.getQuantity()))  // Sort by available quantity (descending)
+                .collect(Collectors.toList());
+
+        // Loop through other warehouses to reduce stock until the remaining need is fulfilled
+        for (Stock stock : stocksToReduce) {
+            if (remainingStockNeeded <= 0) break; // Stop if no more stock is needed
+
+            // Calculate how much stock can be taken from this warehouse
+            int stockToReduce = Math.min(stock.getQuantity(), remainingStockNeeded);
+            remainingStockNeeded -= stockToReduce;
+
+            // Reduce the stock in this warehouse
+            stock.updateQuantity(stock.getQuantity() - stockToReduce);
+            stockChanges.add(new Stock(stock.getId(), stock.getWarehouseId(), productId, -stockToReduce));  // Add the reduced stock to the list
+        }
+
+        return stockChanges;  // Return the list of stock changes (with negative quantities)
+    }
+
+    private Stock findStockInWarehouse(WarehouseId warehouseId, ProductId productId, List<Stock> stocks) {
+        return stocks.stream()
+                .filter(stock -> stock.getWarehouseId().equals(warehouseId) && stock.getProductId().equals(productId))
+                .findFirst()
+                .orElse(null);
+    }
+
     private void initializeOrderItems() {
         long itemId = 1;
         for (OrderItem orderItem: items) {
@@ -116,7 +192,7 @@ public class Order extends AggregateRoot<OrderId> {
 
     private Order(Builder builder) {
         super.setId(builder.orderId);
-        customerId = builder.customerId;
+        userId = builder.userId;
         warehouseId = builder.warehouseId;
         deliveryAddress = builder.deliveryAddress;
         price = builder.price;
@@ -130,8 +206,8 @@ public class Order extends AggregateRoot<OrderId> {
         return new Builder();
     }
 
-    public CustomerId getCustomerId() {
-        return customerId;
+    public UserId getUserId() {
+        return userId;
     }
 
     public WarehouseId getWarehouseId() {
@@ -164,7 +240,7 @@ public class Order extends AggregateRoot<OrderId> {
 
     public static final class Builder {
         private OrderId orderId;
-        private CustomerId customerId;
+        private UserId userId;
         private WarehouseId warehouseId;
         private StreetAddress deliveryAddress;
         private Money price;
@@ -181,8 +257,8 @@ public class Order extends AggregateRoot<OrderId> {
             return this;
         }
 
-        public Builder customerId(CustomerId val) {
-            customerId = val;
+        public Builder userId(UserId val) {
+            userId = val;
             return this;
         }
 
