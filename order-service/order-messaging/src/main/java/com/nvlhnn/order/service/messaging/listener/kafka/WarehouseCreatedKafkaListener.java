@@ -1,7 +1,7 @@
 package com.nvlhnn.order.service.messaging.listener.kafka;
 
 import com.nvlhnn.kafka.consumer.KafkaConsumer;
-import com.nvlhnn.order.service.domain.dto.message.WarehouseResponse;
+import com.nvlhnn.order.service.domain.dto.message.WarehouseResponseMessage;
 import com.nvlhnn.order.service.domain.ports.input.message.listener.warehouse.WarehouseResponseMessageListener;
 import com.nvlhnn.order.service.messaging.mapper.OrderMessagingDataMapper;
 import com.nvlhnn.warehouse.kafka.avro.model.WarehouseCreatedAvroModel;
@@ -44,7 +44,7 @@ public class WarehouseCreatedKafkaListener implements KafkaConsumer<WarehouseCre
         messages.forEach(warehouseResponseAvroModel -> {
 
             log.info("Processing warehouse response with id: {}", warehouseResponseAvroModel.getWarehouseId());
-            WarehouseResponse userResponseMessage = orderMessagingDataMapper
+            WarehouseResponseMessage userResponseMessage = orderMessagingDataMapper
                     .warehouseCreatedAvroModelToWarehouseResponse(warehouseResponseAvroModel);
 
             warehouseResponseMessageListener.onWarehouseSave(userResponseMessage);

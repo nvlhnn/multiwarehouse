@@ -20,4 +20,8 @@ public class OrderAddress {
     @NotNull
     @Max(value = 50)
     private final String city;
+    @NotNull
+    private final Double latitude;
+    @NotNull
+    private final Double longitude;
 }

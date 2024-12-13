@@ -78,6 +78,10 @@ public class StockUpdateHelper {
             Stock stock = warehouseDataMapper.createStockFromCreateUpdateStockCommand(updateStockCommand);
             StockCreatedEvent stockCreatedEvent = warehouseDomainService.createStock(stock, warehouse.get(), product.get(), stockCreatedEventPublisher);
             saveStock(stock);
+
+            Integer productTotalQuantity = stockRepository.getProductTotalQuantity(new ProductId(updateStockCommand.getProductId()));
+            stockCreatedEvent.setProductTotalQuantity(productTotalQuantity);
+
             return stockCreatedEvent;  // Return the created event
         } else {
             // Update stock if it exists
@@ -85,6 +89,11 @@ public class StockUpdateHelper {
                     existingStock.get(),updateStockCommand.getQuantity(), stockUpdatedEventPublisher
             );
             saveStock(existingStock.get());
+
+            Integer productTotalQuantity = stockRepository.getProductTotalQuantity(new ProductId(updateStockCommand.getProductId()));
+            productTotalQuantity = productTotalQuantity != null ? productTotalQuantity : 0;
+            stockUpdatedEvent.setProductTotalQuantity(productTotalQuantity);
+
             return stockUpdatedEvent;  // Return the updated event
         }
     }

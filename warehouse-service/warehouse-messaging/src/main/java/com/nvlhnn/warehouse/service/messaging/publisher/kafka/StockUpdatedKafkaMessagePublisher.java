@@ -52,7 +52,7 @@ public class StockUpdatedKafkaMessagePublisher implements StockUpdatedEventPubli
                     )
             );
 
-            log.info("StockUpdatedAvroModel sent to Kafka for stock id: {}", stockId);
+            log.info("StockUpdatedAvroModel sent to Kafka for kafka id: {} and produt id: {} and total quantity: {}", stockUpdatedAvroModel.getId(), stockUpdatedAvroModel.getProductId(), stockUpdatedAvroModel.getTotalProductStock());
         } catch (Exception e) {
             log.error("Error while sending StockUpdatedAvroModel message to Kafka with stock id: {}, error: {}", stockId, e.getMessage());
         }

@@ -1,6 +1,6 @@
 package com.nvlhnn.order.service.domain;
 
-import com.nvlhnn.order.service.domain.dto.message.WarehouseResponse;
+import com.nvlhnn.order.service.domain.dto.message.WarehouseResponseMessage;
 import com.nvlhnn.order.service.domain.entity.Warehouse;
 import com.nvlhnn.order.service.domain.mapper.OrderDataMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +25,10 @@ public class WarehouseSaveSaga {
     }
 
     @Transactional
-    public void process(WarehouseResponse warehouseResponse) {
-        log.info("Processing save warehouse id: {}", warehouseResponse.getWarehoudId());
+    public void process(WarehouseResponseMessage warehouseResponseMessage) {
+        log.info("Processing save warehouse id: {}", warehouseResponseMessage.getWarehoudId());
 
-        Warehouse warehouse = orderDataMapper.warehouseResponseToWarehouse(warehouseResponse);
+        Warehouse warehouse = orderDataMapper.warehouseResponseToWarehouse(warehouseResponseMessage);
         orderDomainService.validateInitialWarehouse(warehouse);
 
         sagaHelper.saveWarehouse(warehouse);

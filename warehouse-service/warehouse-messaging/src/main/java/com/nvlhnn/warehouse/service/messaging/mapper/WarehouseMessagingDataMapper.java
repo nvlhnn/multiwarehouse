@@ -95,6 +95,7 @@ public class WarehouseMessagingDataMapper {
                 .setWarehouseLongitude(stockCreatedEvent.getWarehouseLongitude())
                 .setStock(stockCreatedEvent.getStock().getQuantity())
                 .setSagaId(UUID.randomUUID())
+                .setTotalProductStock(stockCreatedEvent.getProductTotalQuantity())
                 .setEventTimestamp(stockCreatedEvent.getCreatedAt().toInstant())
                 .build();
     }
@@ -106,6 +107,7 @@ public class WarehouseMessagingDataMapper {
                 .setWarehouseId(stockUpdatedEvent.getStock().getWarehouseId().getValue())
                 .setStock(stockUpdatedEvent.getStock().getQuantity())
                 .setSagaId(UUID.randomUUID())
+                .setTotalProductStock(stockUpdatedEvent.getProductTotalQuantity())
                 .setEventTimestamp(stockUpdatedEvent.getCreatedAt().toInstant())
                 .build();
     }

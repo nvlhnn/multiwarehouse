@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Order extends AggregateRoot<OrderId> {
     private final UserId userId;
-    private final WarehouseId warehouseId;
     private final StreetAddress deliveryAddress;
     private final Money price;
     private final List<OrderItem> items;
 
+    private final Warehouse warehouse;
 
     private TrackingId trackingId;
     private OrderStatus orderStatus;
@@ -98,10 +98,10 @@ public class Order extends AggregateRoot<OrderId> {
             return orderItem.getSubTotal();
         }).reduce(Money.ZERO, Money::add);
 
-        if (!price.equals(orderItemsTotal)) {
-            throw new OrderDomainException("Total price: " + price.getAmount()
-                    + " is not equal to Order items total: " + orderItemsTotal.getAmount() + "!");
-        }
+//        if (!price.equals(orderItemsTotal)) {
+//            throw new OrderDomainException("Total price: " + price.getAmount()
+//                    + " is not equal to Order items total: " + orderItemsTotal.getAmount() + "!");
+//        }
     }
 
     private void validateItemPrice(OrderItem orderItem) {
@@ -193,7 +193,7 @@ public class Order extends AggregateRoot<OrderId> {
     private Order(Builder builder) {
         super.setId(builder.orderId);
         userId = builder.userId;
-        warehouseId = builder.warehouseId;
+        warehouse = builder.warehouse;
         deliveryAddress = builder.deliveryAddress;
         price = builder.price;
         items = builder.items;
@@ -210,8 +210,8 @@ public class Order extends AggregateRoot<OrderId> {
         return userId;
     }
 
-    public WarehouseId getWarehouseId() {
-        return warehouseId;
+    public Warehouse getWarehouse() {
+        return warehouse;
     }
 
     public StreetAddress getDeliveryAddress() {
@@ -241,7 +241,7 @@ public class Order extends AggregateRoot<OrderId> {
     public static final class Builder {
         private OrderId orderId;
         private UserId userId;
-        private WarehouseId warehouseId;
+        private Warehouse warehouse;
         private StreetAddress deliveryAddress;
         private Money price;
         private List<OrderItem> items;
@@ -262,8 +262,8 @@ public class Order extends AggregateRoot<OrderId> {
             return this;
         }
 
-        public Builder warehouseId(WarehouseId val) {
-            warehouseId = val;
+        public Builder warehouse(Warehouse val) {
+            warehouse = val;
             return this;
         }
 

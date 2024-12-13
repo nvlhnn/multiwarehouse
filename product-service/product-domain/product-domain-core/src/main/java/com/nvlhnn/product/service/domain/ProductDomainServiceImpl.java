@@ -23,5 +23,11 @@ public class ProductDomainServiceImpl implements ProductDomainService {
         return new ProductCreatedEvent(product, ZonedDateTime.now(ZoneId.of(UTC)), publisher);
     }
 
+    @Override
+    public void updateProduct(Product product, Integer totalStock) {
+        product.updateTotalStock(totalStock);
+        log.info("Product with id: {} is updated", product.getId());
+    }
+
 
 }

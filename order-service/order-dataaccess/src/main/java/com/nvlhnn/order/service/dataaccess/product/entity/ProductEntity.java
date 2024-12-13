@@ -1,10 +1,10 @@
     package com.nvlhnn.order.service.dataaccess.product.entity;
 
+    import com.nvlhnn.order.service.dataaccess.order.entity.OrderEntity;
+    import com.nvlhnn.order.service.dataaccess.order.entity.OrderItemEntity;
     import lombok.*;
 
-    import javax.persistence.Entity;
-    import javax.persistence.Id;
-    import javax.persistence.Table;
+    import javax.persistence.*;
     import java.math.BigDecimal;
     import java.util.Objects;
     import java.util.UUID;

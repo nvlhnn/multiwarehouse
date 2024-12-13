@@ -65,4 +65,9 @@ public class StockRepositoryImpl implements StockRepository {
         return stockJpaRepository.findByProductIdIn(productIds.stream().map(ProductId::getValue).collect(Collectors.toList()))
                 .map(stocks -> stocks.stream().map(stockDataAccessMapper::stockEntityToStock).collect(Collectors.toList()));
     }
+
+    @Override
+    public Integer getProductTotalQuantity(ProductId productId) {
+        return stockJpaRepository.getProductTotalQuantity(productId.getValue());
+    }
 }

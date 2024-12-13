@@ -1,7 +1,6 @@
 package com.nvlhnn.order.service.domain;
 
-import com.nvlhnn.order.service.domain.dto.create.CreateOrderCommand;
-import com.nvlhnn.order.service.domain.dto.create.CreateOrderResponse;
+import com.nvlhnn.order.service.domain.dto.create.*;
 import com.nvlhnn.order.service.domain.dto.track.TrackOrderQuery;
 import com.nvlhnn.order.service.domain.dto.track.TrackOrderResponse;
 import com.nvlhnn.order.service.domain.ports.input.service.OrderApplicationService;
@@ -21,10 +20,23 @@ class OrderApplicationServiceImpl implements OrderApplicationService {
 
     private final OrderTrackCommandHandler orderTrackCommandHandler;
 
+    private final OrderGetAllCommandHandler orderGetAllCommandHandler;
+
+    private final OrderGetAllByCustomerIdCommandHanlder orderGetAllByCustomerIdCommandHandler;
+
+    private final OrderGetStatsCommandHandler orderGetStatsCommandHandler;
+
     OrderApplicationServiceImpl(OrderCreateCommandHandler orderCreateCommandHandler,
-                                OrderTrackCommandHandler orderTrackCommandHandler) {
+                                OrderTrackCommandHandler orderTrackCommandHandler,
+                                OrderGetAllCommandHandler orderGetAllCommandHandler,
+                                OrderGetStatsCommandHandler orderGetStatsCommandHandler,
+                                OrderGetAllByCustomerIdCommandHanlder orderGetAllByCustomerIdCommandHandler
+    ) {
         this.orderCreateCommandHandler = orderCreateCommandHandler;
         this.orderTrackCommandHandler = orderTrackCommandHandler;
+        this.orderGetAllCommandHandler = orderGetAllCommandHandler;
+        this.orderGetAllByCustomerIdCommandHandler = orderGetAllByCustomerIdCommandHandler;
+        this.orderGetStatsCommandHandler = orderGetStatsCommandHandler;
     }
 
     @Override
@@ -36,4 +48,25 @@ class OrderApplicationServiceImpl implements OrderApplicationService {
     public TrackOrderResponse trackOrder(TrackOrderQuery trackOrderQuery) {
         return orderTrackCommandHandler.trackOrder(trackOrderQuery);
     }
+
+//    @Override
+//    public OrderResponse getAllByCustomerId() {
+//        return orderGetAllByCustomerIdCommandHandler.getAllByCustomerId();
+//    }
+//
+    @Override
+    public OrderListResponse getAllOrders(int page, int size) {
+        return orderGetAllCommandHandler.getAllOrders(page, size);
+    }
+
+    @Override
+    public OrderListResponse getAllOrdersByCustomerId(String customerId, int page, int size) {
+        return orderGetAllByCustomerIdCommandHandler.getAllByCustomerId(customerId, page, size);
+    }
+
+    @Override
+    public OrderStatsResponse getLastWeekOrderStat() {
+        return orderGetStatsCommandHandler.getOrderStats();
+    }
+
 }

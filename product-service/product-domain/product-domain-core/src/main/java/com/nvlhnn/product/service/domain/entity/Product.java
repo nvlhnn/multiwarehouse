@@ -52,6 +52,10 @@ public class Product extends AggregateRoot<ProductId> {
         this.price = price;
     }
 
+    public void updateTotalStock(Integer totalStock) {
+        this.totalStock = totalStock;
+    }
+
     // Getters
     public String getName() {
         return name;

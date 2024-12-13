@@ -27,7 +27,7 @@ public class OrderMessagingDataMapper {
                 .setId(UUID.randomUUID())
                 .setSagaId(UUID.randomUUID())
                 .setOrderId(order.getId().getValue())
-                .setWarehouseId(order.getWarehouseId().getValue())
+                .setWarehouseId(order.getWarehouse().getId().getValue())
                 .setCreatedAt(orderCreatedEvent.getCreatedAt().toInstant())
                 .setOrderStatus(mapOrderStatus(order.getOrderStatus()))
                 .setProducts(
@@ -77,8 +77,8 @@ public class OrderMessagingDataMapper {
 
     }
 
-    public WarehouseResponse warehouseCreatedAvroModelToWarehouseResponse(WarehouseCreatedAvroModel warehouseCreatedAvroModel) {
-        return WarehouseResponse.builder()
+    public WarehouseResponseMessage warehouseCreatedAvroModelToWarehouseResponse(WarehouseCreatedAvroModel warehouseCreatedAvroModel) {
+        return WarehouseResponseMessage.builder()
                 .id(warehouseCreatedAvroModel.getId().toString())
                 .sagaId(warehouseCreatedAvroModel.getSagaId().toString())
                 .warehoudId(warehouseCreatedAvroModel.getWarehouseId().toString())

@@ -1,7 +1,10 @@
 package com.nvlhnn.order.service.domain.rest;
 
+import com.nvlhnn.domain.valueobject.UserId;
 import com.nvlhnn.order.service.domain.dto.create.CreateOrderCommand;
 import com.nvlhnn.order.service.domain.dto.create.CreateOrderResponse;
+import com.nvlhnn.order.service.domain.dto.create.OrderListResponse;
+import com.nvlhnn.order.service.domain.dto.create.OrderStatsResponse;
 import com.nvlhnn.order.service.domain.dto.track.TrackOrderQuery;
 import com.nvlhnn.order.service.domain.dto.track.TrackOrderResponse;
 import com.nvlhnn.order.service.domain.ports.input.service.OrderApplicationService;
@@ -38,5 +41,33 @@ public class OrderController {
                 orderApplicationService.trackOrder(TrackOrderQuery.builder().orderTrackingId(trackingId).build());
         log.info("Returning order status with tracking id: {}", trackOrderResponse.getOrderTrackingId());
         return  ResponseEntity.ok(trackOrderResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<OrderListResponse> getOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        OrderListResponse response = orderApplicationService.getAllOrders(page, size);
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/stats")
+    public ResponseEntity<OrderStatsResponse> getStat() {
+        OrderStatsResponse response = orderApplicationService.getLastWeekOrderStat();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/customers")
+    public ResponseEntity<OrderListResponse> getCustomerOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+
+        String customerId = request.getAttribute("userId").toString();
+        if (customerId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        OrderListResponse response = orderApplicationService.getAllOrdersByCustomerId(customerId, page, size);
+        return ResponseEntity.ok(response);
     }
 }

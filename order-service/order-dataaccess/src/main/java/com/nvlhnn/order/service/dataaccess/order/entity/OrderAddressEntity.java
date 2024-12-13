@@ -24,6 +24,8 @@ public class OrderAddressEntity {
     private String street;
     private String postalCode;
     private String city;
+    private Double latitude;
+    private Double longitude;
 
     @Override
     public boolean equals(Object o) {

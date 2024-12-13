@@ -1,5 +1,6 @@
 package com.nvlhnn.order.service.dataaccess.warehouse.entity;
 
+import com.nvlhnn.order.service.dataaccess.order.entity.OrderEntity;
 import lombok.*;
 
 import javax.persistence.*;

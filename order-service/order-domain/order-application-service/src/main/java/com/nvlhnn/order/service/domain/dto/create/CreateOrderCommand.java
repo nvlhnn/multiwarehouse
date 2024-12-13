@@ -20,8 +20,4 @@ public class CreateOrderCommand {
     private final List<OrderItem> items;
     @NotNull
     private final OrderAddress address;
-    @NotNull
-    private final Double latitude;
-    @NotNull
-    private final Double longitude;
 }

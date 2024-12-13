@@ -5,12 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.Instant;
-import java.util.List;
 
 @Getter
 @Builder
 @AllArgsConstructor
-public class WarehouseResponse {
+public class WarehouseResponseMessage {
     private final String id;
     private final String sagaId;
     private final String warehoudId;

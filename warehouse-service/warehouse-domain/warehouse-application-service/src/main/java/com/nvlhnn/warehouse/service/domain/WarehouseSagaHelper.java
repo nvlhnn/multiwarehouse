@@ -52,4 +52,8 @@ public class WarehouseSagaHelper {
     public void saveStock(Stock stock) {
         stockRepository.save(stock);
     }
+
+    public Integer getProductTotalQuantity(ProductId productId) {
+        return stockRepository.getProductTotalQuantity(productId);
+    }
 }

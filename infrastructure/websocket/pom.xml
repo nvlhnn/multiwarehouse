@@ -5,15 +5,22 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.nvlhnn</groupId>
-        <artifactId>multi-warehouse</artifactId>
+        <artifactId>infrastructure</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>infrastructure</artifactId>
+    <artifactId>websocket</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>kafka</module>
-        <module>kafka/kafka-consumer</module>
+        <module>websocket-config-data</module>
+        <module>websocket-publisher</module>
     </modules>
+
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
 
 </project>

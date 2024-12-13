@@ -6,9 +6,14 @@ import com.nvlhnn.order.service.dataaccess.order.repository.OrderJpaRepository;
 import com.nvlhnn.order.service.domain.entity.Order;
 import com.nvlhnn.order.service.domain.ports.output.repository.OrderRepository;
 import com.nvlhnn.order.service.domain.valueobject.TrackingId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class OrderRepositoryImpl implements OrderRepository {
@@ -37,5 +42,21 @@ public class OrderRepositoryImpl implements OrderRepository {
     public Optional<Order> findByTrackingId(TrackingId trackingId) {
         return orderJpaRepository.findByTrackingId(trackingId.getValue())
                 .map(orderDataAccessMapper::orderEntityToOrder);
+    }
+
+    @Override
+    public Page<Order> findAll(Pageable pageable) {
+        return orderJpaRepository.findAll(pageable).map(orderDataAccessMapper::orderEntityToOrder);
+    }
+
+
+    @Override
+    public Page<Order> findByUserId(UUID userId, Pageable pageable) {
+        return orderJpaRepository.findByUserId(userId, pageable).map(orderDataAccessMapper::orderEntityToOrder);
+    }
+
+    @Override
+    public List<Object[]> findTotalOrdersByDay(LocalDate startDate, LocalDate endDate) {
+        return orderJpaRepository.findTotalOrdersByDay(startDate, endDate);
     }
 }

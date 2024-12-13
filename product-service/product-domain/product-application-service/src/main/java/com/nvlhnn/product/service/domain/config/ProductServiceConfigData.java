@@ -9,4 +9,6 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "product-service")
 public class ProductServiceConfigData {
     private String productCreatedTopicName;
+    private String stockCreatedTopicName;
+    private String stockUpdatedTopicName;
 }

@@ -8,4 +8,6 @@ public interface ProductDomainService {
 
     ProductCreatedEvent createProduct(Product product, DomainEventPublisher<ProductCreatedEvent> publisher);
 
+    void updateProduct(Product product, Integer totalStock);
+
 }

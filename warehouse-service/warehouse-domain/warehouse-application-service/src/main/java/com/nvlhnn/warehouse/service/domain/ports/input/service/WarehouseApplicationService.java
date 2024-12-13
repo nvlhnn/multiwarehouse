@@ -2,8 +2,10 @@ package com.nvlhnn.warehouse.service.domain.ports.input.service;
 
 
 import com.nvlhnn.warehouse.service.domain.dto.create.*;
+import com.nvlhnn.warehouse.service.domain.dto.response.WarehouseProductStockResponse;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 public interface WarehouseApplicationService {
 
@@ -20,5 +22,7 @@ public interface WarehouseApplicationService {
     CreateStockResponse createStock(@Valid CreateStockCommand createStockCommand);
 
     CreateStockResponse updateStock(@Valid CreateUpdateStockCommand updateSTockCommand);
+
+    WarehouseProductStockResponse getProductStockByWarehouse(UUID warehouseId, UUID productId);
 
 }

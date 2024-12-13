@@ -8,6 +8,7 @@ import java.time.ZonedDateTime;
 public class StockUpdatedEvent extends StockEvent{
 
     private final int quantity;
+    private Integer productTotalQuantity;
 
     private final DomainEventPublisher<StockUpdatedEvent> stockUpdatedEventDomainEventPublisher;
 
@@ -15,6 +16,14 @@ public class StockUpdatedEvent extends StockEvent{
         super(stock, createdAt);
         this.stockUpdatedEventDomainEventPublisher = stockUpdatedEventDomainEventPublisher;
         this.quantity = quantity;
+    }
+
+    public Integer getProductTotalQuantity() {
+        return productTotalQuantity;
+    }
+
+    public void setProductTotalQuantity(Integer productTotalQuantity) {
+        this.productTotalQuantity = productTotalQuantity;
     }
 
     public int getQuantity() {

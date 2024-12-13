@@ -14,10 +14,10 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -7500826480810391505L;
+  private static final long serialVersionUID = 7711491160524787725L;
 
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"StockUpdatedAvroModel\",\"namespace\":\"com.nvlhnn.warehouse.kafka.avro.model\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"sagaId\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"stockId\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"warehouseId\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"productId\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"stock\",\"type\":\"int\"},{\"name\":\"eventTimestamp\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"StockUpdatedAvroModel\",\"namespace\":\"com.nvlhnn.warehouse.kafka.avro.model\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"sagaId\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"stockId\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"warehouseId\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"productId\",\"type\":{\"type\":\"string\",\"logicalType\":\"uuid\"}},{\"name\":\"stock\",\"type\":\"int\"},{\"name\":\"totalProductStock\",\"type\":\"int\"},{\"name\":\"eventTimestamp\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
@@ -83,6 +83,7 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
   private java.util.UUID warehouseId;
   private java.util.UUID productId;
   private int stock;
+  private int totalProductStock;
   private java.time.Instant eventTimestamp;
 
   /**
@@ -100,15 +101,17 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
    * @param warehouseId The new value for warehouseId
    * @param productId The new value for productId
    * @param stock The new value for stock
+   * @param totalProductStock The new value for totalProductStock
    * @param eventTimestamp The new value for eventTimestamp
    */
-  public StockUpdatedAvroModel(java.util.UUID id, java.util.UUID sagaId, java.util.UUID stockId, java.util.UUID warehouseId, java.util.UUID productId, java.lang.Integer stock, java.time.Instant eventTimestamp) {
+  public StockUpdatedAvroModel(java.util.UUID id, java.util.UUID sagaId, java.util.UUID stockId, java.util.UUID warehouseId, java.util.UUID productId, java.lang.Integer stock, java.lang.Integer totalProductStock, java.time.Instant eventTimestamp) {
     this.id = id;
     this.sagaId = sagaId;
     this.stockId = stockId;
     this.warehouseId = warehouseId;
     this.productId = productId;
     this.stock = stock;
+    this.totalProductStock = totalProductStock;
     this.eventTimestamp = eventTimestamp.truncatedTo(java.time.temporal.ChronoUnit.MILLIS);
   }
 
@@ -128,7 +131,8 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
     case 3: return warehouseId;
     case 4: return productId;
     case 5: return stock;
-    case 6: return eventTimestamp;
+    case 6: return totalProductStock;
+    case 7: return eventTimestamp;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -140,6 +144,7 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
       new org.apache.avro.Conversions.UUIDConversion(),
       new org.apache.avro.Conversions.UUIDConversion(),
       new org.apache.avro.Conversions.UUIDConversion(),
+      null,
       null,
       new org.apache.avro.data.TimeConversions.TimestampMillisConversion(),
       null
@@ -161,7 +166,8 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
     case 3: warehouseId = (java.util.UUID)value$; break;
     case 4: productId = (java.util.UUID)value$; break;
     case 5: stock = (java.lang.Integer)value$; break;
-    case 6: eventTimestamp = (java.time.Instant)value$; break;
+    case 6: totalProductStock = (java.lang.Integer)value$; break;
+    case 7: eventTimestamp = (java.time.Instant)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -269,6 +275,23 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
   }
 
   /**
+   * Gets the value of the 'totalProductStock' field.
+   * @return The value of the 'totalProductStock' field.
+   */
+  public int getTotalProductStock() {
+    return totalProductStock;
+  }
+
+
+  /**
+   * Sets the value of the 'totalProductStock' field.
+   * @param value the value to set.
+   */
+  public void setTotalProductStock(int value) {
+    this.totalProductStock = value;
+  }
+
+  /**
    * Gets the value of the 'eventTimestamp' field.
    * @return The value of the 'eventTimestamp' field.
    */
@@ -332,6 +355,7 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
     private java.util.UUID warehouseId;
     private java.util.UUID productId;
     private int stock;
+    private int totalProductStock;
     private java.time.Instant eventTimestamp;
 
     /** Creates a new Builder */
@@ -369,9 +393,13 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
         this.stock = data().deepCopy(fields()[5].schema(), other.stock);
         fieldSetFlags()[5] = other.fieldSetFlags()[5];
       }
-      if (isValidValue(fields()[6], other.eventTimestamp)) {
-        this.eventTimestamp = data().deepCopy(fields()[6].schema(), other.eventTimestamp);
+      if (isValidValue(fields()[6], other.totalProductStock)) {
+        this.totalProductStock = data().deepCopy(fields()[6].schema(), other.totalProductStock);
         fieldSetFlags()[6] = other.fieldSetFlags()[6];
+      }
+      if (isValidValue(fields()[7], other.eventTimestamp)) {
+        this.eventTimestamp = data().deepCopy(fields()[7].schema(), other.eventTimestamp);
+        fieldSetFlags()[7] = other.fieldSetFlags()[7];
       }
     }
 
@@ -405,9 +433,13 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
         this.stock = data().deepCopy(fields()[5].schema(), other.stock);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.eventTimestamp)) {
-        this.eventTimestamp = data().deepCopy(fields()[6].schema(), other.eventTimestamp);
+      if (isValidValue(fields()[6], other.totalProductStock)) {
+        this.totalProductStock = data().deepCopy(fields()[6].schema(), other.totalProductStock);
         fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.eventTimestamp)) {
+        this.eventTimestamp = data().deepCopy(fields()[7].schema(), other.eventTimestamp);
+        fieldSetFlags()[7] = true;
       }
     }
 
@@ -651,6 +683,45 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
     }
 
     /**
+      * Gets the value of the 'totalProductStock' field.
+      * @return The value.
+      */
+    public int getTotalProductStock() {
+      return totalProductStock;
+    }
+
+
+    /**
+      * Sets the value of the 'totalProductStock' field.
+      * @param value The value of 'totalProductStock'.
+      * @return This builder.
+      */
+    public com.nvlhnn.warehouse.kafka.avro.model.StockUpdatedAvroModel.Builder setTotalProductStock(int value) {
+      validate(fields()[6], value);
+      this.totalProductStock = value;
+      fieldSetFlags()[6] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'totalProductStock' field has been set.
+      * @return True if the 'totalProductStock' field has been set, false otherwise.
+      */
+    public boolean hasTotalProductStock() {
+      return fieldSetFlags()[6];
+    }
+
+
+    /**
+      * Clears the value of the 'totalProductStock' field.
+      * @return This builder.
+      */
+    public com.nvlhnn.warehouse.kafka.avro.model.StockUpdatedAvroModel.Builder clearTotalProductStock() {
+      fieldSetFlags()[6] = false;
+      return this;
+    }
+
+    /**
       * Gets the value of the 'eventTimestamp' field.
       * @return The value.
       */
@@ -665,9 +736,9 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
       * @return This builder.
       */
     public com.nvlhnn.warehouse.kafka.avro.model.StockUpdatedAvroModel.Builder setEventTimestamp(java.time.Instant value) {
-      validate(fields()[6], value);
+      validate(fields()[7], value);
       this.eventTimestamp = value.truncatedTo(java.time.temporal.ChronoUnit.MILLIS);
-      fieldSetFlags()[6] = true;
+      fieldSetFlags()[7] = true;
       return this;
     }
 
@@ -676,7 +747,7 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
       * @return True if the 'eventTimestamp' field has been set, false otherwise.
       */
     public boolean hasEventTimestamp() {
-      return fieldSetFlags()[6];
+      return fieldSetFlags()[7];
     }
 
 
@@ -685,7 +756,7 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
       * @return This builder.
       */
     public com.nvlhnn.warehouse.kafka.avro.model.StockUpdatedAvroModel.Builder clearEventTimestamp() {
-      fieldSetFlags()[6] = false;
+      fieldSetFlags()[7] = false;
       return this;
     }
 
@@ -700,7 +771,8 @@ public class StockUpdatedAvroModel extends org.apache.avro.specific.SpecificReco
         record.warehouseId = fieldSetFlags()[3] ? this.warehouseId : (java.util.UUID) defaultValue(fields()[3]);
         record.productId = fieldSetFlags()[4] ? this.productId : (java.util.UUID) defaultValue(fields()[4]);
         record.stock = fieldSetFlags()[5] ? this.stock : (java.lang.Integer) defaultValue(fields()[5]);
-        record.eventTimestamp = fieldSetFlags()[6] ? this.eventTimestamp : (java.time.Instant) defaultValue(fields()[6]);
+        record.totalProductStock = fieldSetFlags()[6] ? this.totalProductStock : (java.lang.Integer) defaultValue(fields()[6]);
+        record.eventTimestamp = fieldSetFlags()[7] ? this.eventTimestamp : (java.time.Instant) defaultValue(fields()[7]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;

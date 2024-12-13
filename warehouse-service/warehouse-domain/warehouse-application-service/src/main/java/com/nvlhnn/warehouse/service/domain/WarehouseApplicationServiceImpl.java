@@ -1,10 +1,13 @@
 package com.nvlhnn.warehouse.service.domain;
 
 import com.nvlhnn.warehouse.service.domain.dto.create.*;
+import com.nvlhnn.warehouse.service.domain.dto.response.WarehouseProductStockResponse;
 import com.nvlhnn.warehouse.service.domain.ports.input.service.WarehouseApplicationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.UUID;
 
 @Slf4j
 @Validated
@@ -17,18 +20,21 @@ public class WarehouseApplicationServiceImpl implements WarehouseApplicationServ
     private final StockTransferCommandHandler stockTransferCommandHandler;
     private final StockUpdateCommandHandler stockUpdateCommandHandler;
     private final WarehouseListCommandHandler warehouseListCommandHandler;
+    private final WarehouseGetProductStockCommandHandler warehouseGetProductStockCommandHandler;
 
     public WarehouseApplicationServiceImpl(WarehouseCreateCommandHandler warehouseCreateCommandHandler,
                                            WarehouseUpdateCommandHandler warehouseUpdateCommandHandler,
                                            StockCreateCommandHandler stockCreateCommandHandler,
                                            WarehouseListCommandHandler warehouseListCommandHandler,
                                            StockTransferCommandHandler stockTransferCommandHandler,
+                                           WarehouseGetProductStockCommandHandler warehouseGetProductStockCommandHandler,
                                            StockUpdateCommandHandler stockUpdateCommandHandler) {
         this.warehouseCreateCommandHandler = warehouseCreateCommandHandler;
         this.warehouseUpdateCommandHandler = warehouseUpdateCommandHandler;
         this.stockCreateCommandHandler = stockCreateCommandHandler;
         this.stockTransferCommandHandler = stockTransferCommandHandler;
         this.stockUpdateCommandHandler = stockUpdateCommandHandler;
+        this.warehouseGetProductStockCommandHandler = warehouseGetProductStockCommandHandler;
         this.warehouseListCommandHandler = warehouseListCommandHandler;
     }
 
@@ -70,5 +76,11 @@ public class WarehouseApplicationServiceImpl implements WarehouseApplicationServ
         log.info("Updating stock for product id: {} in warehouse id: {}",
                 updateStockCommand.getProductId(), updateStockCommand.getWarehouseId());
         return stockUpdateCommandHandler.updateStock(updateStockCommand);
+    }
+
+    @Override
+    public WarehouseProductStockResponse getProductStockByWarehouse(UUID warehouseId, UUID productId) {
+        log.info("Getting stock for product id: {} in warehouse id: {}", productId, warehouseId);
+        return warehouseGetProductStockCommandHandler.getProductStockByWarehouse(warehouseId, productId);
     }
 }

@@ -22,4 +22,7 @@ public interface StockRepository {
 
     Optional<List<Stock>> findByProductIdIn(List<ProductId> productIds);
 
+    Integer getProductTotalQuantity(ProductId productId);
+
+
 }

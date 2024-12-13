@@ -83,6 +83,11 @@ public class OrderStockUpdateSaga {
             StockUpdatedEvent stockUpdatedEvent = warehouseDomainService.updateStock(currentStock, stock.getQuantity(), stockUpdatedEventPublisher);
             sagaHelper.saveStock(currentStock);
 
+            Integer productTotalQuantity = sagaHelper.getProductTotalQuantity(currentStock.getProductId());
+            productTotalQuantity = productTotalQuantity != null ? productTotalQuantity : 0;
+            stockUpdatedEvent.setProductTotalQuantity(productTotalQuantity);
+
+
             stockUpdatedEventPublisher.publish(stockUpdatedEvent);
             log.info("Updated stock for product id: {} in warehouse id: {} with new quantity: {}",
                     product.getProductId(), warehouse.getId().getValue(), stock.getQuantity());

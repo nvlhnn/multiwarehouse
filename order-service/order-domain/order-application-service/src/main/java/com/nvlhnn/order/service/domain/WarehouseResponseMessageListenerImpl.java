@@ -1,10 +1,8 @@
 package com.nvlhnn.order.service.domain;
 
-import com.nvlhnn.domain.valueobject.ProductId;
-import com.nvlhnn.domain.valueobject.WarehouseId;
 import com.nvlhnn.order.service.domain.dto.message.StockCreatedResponseMessage;
 import com.nvlhnn.order.service.domain.dto.message.StockUpdatedResponseMessage;
-import com.nvlhnn.order.service.domain.dto.message.WarehouseResponse;
+import com.nvlhnn.order.service.domain.dto.message.WarehouseResponseMessage;
 import com.nvlhnn.order.service.domain.entity.Stock;
 import com.nvlhnn.order.service.domain.exception.OrderDomainException;
 import com.nvlhnn.order.service.domain.mapper.OrderDataMapper;
@@ -12,8 +10,6 @@ import com.nvlhnn.order.service.domain.ports.input.message.listener.warehouse.Wa
 import com.nvlhnn.order.service.domain.ports.output.repository.StockRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -34,10 +30,10 @@ public class WarehouseResponseMessageListenerImpl implements WarehouseResponseMe
     }
 
     @Override
-    public void onWarehouseSave(WarehouseResponse warehouseResponse) {
+    public void onWarehouseSave(WarehouseResponseMessage warehouseResponseMessage) {
 
-        log.info("Received WarehouseSave event for warehouse id: {}", warehouseResponse.getWarehoudId());
-        warehouseSaveSaga.process(warehouseResponse);
+        log.info("Received WarehouseSave event for warehouse id: {}", warehouseResponseMessage.getWarehoudId());
+        warehouseSaveSaga.process(warehouseResponseMessage);
 
     }
 

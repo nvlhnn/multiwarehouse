@@ -66,7 +66,7 @@ public class OrderCreateHelper {
         }
 
         // get nearest warehouse
-        Optional<Warehouse> nearestWarehouse = warehouseRepository.findNearestLocation(createOrderCommand.getLatitude(), createOrderCommand.getLongitude());
+        Optional<Warehouse> nearestWarehouse = warehouseRepository.findNearestLocation(createOrderCommand.getAddress().getLatitude(), createOrderCommand.getAddress().getLongitude());
         if (nearestWarehouse.isEmpty()) {
             log.warn("Could not find nearest warehouse!");
             throw new OrderDomainException("Could not find nearest warehouse!");
