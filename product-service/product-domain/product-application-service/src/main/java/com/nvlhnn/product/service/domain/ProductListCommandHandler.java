@@ -8,6 +8,8 @@ import com.nvlhnn.product.service.domain.ports.output.repository.ProductReposito
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -28,7 +30,7 @@ public class ProductListCommandHandler {
     public ProductListResponse listProducts(int page, int size) {
         log.info("Listing products with page: {} and size: {}", page, size);
 
-        PageRequest pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
         Page<Product> productPage = productRepository.findAll(pageable);
 
         return productDataMapper.productPageToProductListResponse(productPage);

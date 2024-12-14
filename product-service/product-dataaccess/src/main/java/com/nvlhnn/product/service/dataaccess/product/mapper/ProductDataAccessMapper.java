@@ -14,6 +14,7 @@ public class ProductDataAccessMapper {
                 .name(product.getName())
                 .price(product.getPrice())
                 .totalStock(product.getTotalStock())
+                .imageUrl(product.getImageUrl())
                 .build();
     }
 
@@ -23,6 +24,7 @@ public class ProductDataAccessMapper {
                 .name(productEntity.getName())
                 .price(productEntity.getPrice())
                 .totalStock(productEntity.getTotalStock())
+                .imageUrl(productEntity.getImageUrl())
                 .build();
     }
 }

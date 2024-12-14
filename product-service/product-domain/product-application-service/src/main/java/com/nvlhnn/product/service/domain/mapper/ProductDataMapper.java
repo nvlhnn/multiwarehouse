@@ -22,6 +22,7 @@ public class ProductDataMapper {
         return Product.builder()
                 .name(productCommand.getName())
                 .price(productCommand.getPrice())
+                .imageUrl(productCommand.getImageUrl())
                 .build();
     }
 
@@ -31,6 +32,7 @@ public class ProductDataMapper {
                 .name(product.getName())
                 .price(product.getPrice())
                 .totalStock(product.getTotalStock())
+                .imageUrl(product.getImageUrl())
                 .message(message)
                 .build();
     }
@@ -41,6 +43,7 @@ public class ProductDataMapper {
                         .productId(product.getId().getValue())
                         .name(product.getName())
                         .price(product.getPrice())
+                        .imageUrl(product.getImageUrl())
                         .totalStock(product.getTotalStock())
                         .build())
                 .collect(Collectors.toList());

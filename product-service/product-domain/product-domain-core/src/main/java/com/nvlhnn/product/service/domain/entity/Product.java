@@ -12,12 +12,14 @@ public class Product extends AggregateRoot<ProductId> {
     private String name;
     private BigDecimal price;
     private Integer totalStock;
+    private String imageUrl; // New field
 
     private Product(Builder builder) {
         super.setId(builder.productId);
         this.name = builder.name;
         this.price = builder.price;
         this.totalStock =  builder.totalStock;
+        this.imageUrl = builder.imageUrl;
     }
 
     public static Builder builder() {
@@ -27,6 +29,8 @@ public class Product extends AggregateRoot<ProductId> {
     public void validateProduct() {
         validateName();
         validatePrice();
+        validateImageUrl();
+
     }
 
     // initialize product
@@ -44,6 +48,12 @@ public class Product extends AggregateRoot<ProductId> {
     private void validatePrice() {
         if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
             throw new ProductDomainException("Product price must be greater than zero.");
+        }
+    }
+
+    private void validateImageUrl() {
+        if (imageUrl == null || imageUrl.trim().isEmpty()) {
+            throw new ProductDomainException("Product image URL cannot be null or empty.");
         }
     }
 
@@ -69,11 +79,16 @@ public class Product extends AggregateRoot<ProductId> {
         return totalStock;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
     public static final class Builder {
         private ProductId productId;
         private String name;
         private BigDecimal price;
         private Integer totalStock;
+        private String imageUrl; // New field
 
         private Builder() {}
 
@@ -96,6 +111,12 @@ public class Product extends AggregateRoot<ProductId> {
             this.totalStock = totalStock;
             return this;
         }
+
+        public Builder imageUrl(String imageUrl) { // New setter
+            this.imageUrl = imageUrl;
+            return this;
+        }
+
         public Product build() {
             return new Product(this);
         }

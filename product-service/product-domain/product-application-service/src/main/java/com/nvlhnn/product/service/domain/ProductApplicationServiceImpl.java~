@@ -46,7 +46,7 @@ public class ProductApplicationServiceImpl implements ProductApplicationService 
                     .body(ProductResponse.builder()
                             .message("Product creation failed: " + e.getMessage())
                             .build());
-        }
+        }x
     }
 
     @Override

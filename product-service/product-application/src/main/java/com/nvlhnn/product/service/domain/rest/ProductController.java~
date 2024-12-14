@@ -29,7 +29,9 @@ public class ProductController {
             @RequestParam("price") BigDecimal price,
             @RequestPart("image") MultipartFile file)  {
         log.info("Creating product with name: {}", name);
-        return productApplicationService.createProduct(name, price, file);
+        ProductResponse productResponse = productApplicationService.createProduct(name, price, file);
+        log.info("Product created with id {}", productResponse.getProductId());
+        return ResponseEntity.ok(productResponse);
     }
 
     // list products

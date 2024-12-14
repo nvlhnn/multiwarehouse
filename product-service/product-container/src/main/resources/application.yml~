@@ -14,7 +14,7 @@ product-service:
 cloudinary:
   cloud-name: dvvbkxfno
   api-key: 466851742511383
-  api-secret: 6KcHjdxbvkJWyGHSAGKl9U5uMQ4
+  api-secret: YOUR_API_SECRET
 
 spring:
   jpa:
