@@ -1,10 +1,7 @@
 package com.nvlhnn.order.service.domain.rest;
 
 import com.nvlhnn.domain.valueobject.UserId;
-import com.nvlhnn.order.service.domain.dto.create.CreateOrderCommand;
-import com.nvlhnn.order.service.domain.dto.create.CreateOrderResponse;
-import com.nvlhnn.order.service.domain.dto.create.OrderListResponse;
-import com.nvlhnn.order.service.domain.dto.create.OrderStatsResponse;
+import com.nvlhnn.order.service.domain.dto.create.*;
 import com.nvlhnn.order.service.domain.dto.track.TrackOrderQuery;
 import com.nvlhnn.order.service.domain.dto.track.TrackOrderResponse;
 import com.nvlhnn.order.service.domain.ports.input.service.OrderApplicationService;
@@ -30,7 +27,11 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<CreateOrderResponse> createOrder(@RequestBody CreateOrderCommand createOrderCommand, HttpServletRequest request) {
         log.info("Creating order");
-        CreateOrderResponse createOrderResponse = orderApplicationService.createOrder(createOrderCommand, request);
+
+        UUID userId =  UUID.fromString(request.getAttribute("userId").toString());
+        createOrderCommand.setUserId(userId);
+
+        CreateOrderResponse createOrderResponse = orderApplicationService.createOrder(createOrderCommand);
         log.info("Order created with tracking id: {}", createOrderResponse.getOrderTrackingId());
         return ResponseEntity.ok(createOrderResponse);
     }
@@ -69,5 +70,11 @@ public class OrderController {
 
         OrderListResponse response = orderApplicationService.getAllOrdersByCustomerId(customerId, page, size);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/pay/{orderId}")
+    public ResponseEntity<OrderResponse> payment(@PathVariable String orderId) {
+        OrderResponse orderResponse = orderApplicationService.payment(orderId.toString());
+        return ResponseEntity.ok(orderResponse);
     }
 }

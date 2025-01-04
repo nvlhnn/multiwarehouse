@@ -4,6 +4,7 @@ import com.nvlhnn.domain.valueobject.OrderId;
 import com.nvlhnn.order.service.dataaccess.order.mapper.OrderDataAccessMapper;
 import com.nvlhnn.order.service.dataaccess.order.repository.OrderJpaRepository;
 import com.nvlhnn.order.service.domain.entity.Order;
+import com.nvlhnn.order.service.domain.exception.OrderDomainException;
 import com.nvlhnn.order.service.domain.ports.output.repository.OrderRepository;
 import com.nvlhnn.order.service.domain.valueobject.TrackingId;
 import org.springframework.data.domain.Page;
@@ -39,6 +40,11 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public Optional<Order> findByIdWithItems(OrderId orderId) {
+        return orderJpaRepository.findByIdWithItems(orderId.getValue()).map(orderDataAccessMapper::orderEntityToOrder);
+    }
+
+    @Override
     public Optional<Order> findByTrackingId(TrackingId trackingId) {
         return orderJpaRepository.findByTrackingId(trackingId.getValue())
                 .map(orderDataAccessMapper::orderEntityToOrder);
@@ -59,4 +65,11 @@ public class OrderRepositoryImpl implements OrderRepository {
     public List<Object[]> findTotalOrdersByDay(LocalDate startDate, LocalDate endDate) {
         return orderJpaRepository.findTotalOrdersByDay(startDate, endDate);
     }
+
+    @Override
+    public int payOrder(Order order) {
+        return orderJpaRepository.payOrder(order.getId().getValue(), order.getOrderStatus());
+
+    }
+
 }

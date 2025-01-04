@@ -33,7 +33,7 @@ public class WarehouseCreateHelper {
     @Transactional
     public WarehouseCreatedEvent persistWarehouse(CreateWarehouseCommand createWarehouseCommand) {
         Warehouse warehouse = warehouseDataMapper.createWarehouseCommandToWarehouse(createWarehouseCommand);
-        WarehouseCreatedEvent warehouseCreatedEvent = warehouseDomainService.createWarehouse(warehouse, warehouseCreatedEventPublisher);
+        WarehouseCreatedEvent warehouseCreatedEvent = warehouseDomainService.validateAndInitializeWarehouse(warehouse, warehouseCreatedEventPublisher);
         saveWarehouse(warehouse);
         log.info("Warehouse is created with id: {}", warehouseCreatedEvent.getWarehouse().getId().getValue());
         return warehouseCreatedEvent;

@@ -45,7 +45,7 @@ public class OrderDataMapper {
                 .build();
     }
 
-    private List<OrderItem> orderItemsToOrderItemEntities(
+    public List<OrderItem> orderItemsToOrderItemEntities(
             @NotNull List<com.nvlhnn.order.service.domain.dto.create.OrderItem> orderItems) {
         return orderItems.stream()
                 .map(orderItem ->
@@ -57,7 +57,7 @@ public class OrderDataMapper {
                                 .build()).collect(Collectors.toList());
     }
 
-    private StreetAddress orderAddressToStreetAddress(OrderAddress orderAddress) {
+    public StreetAddress orderAddressToStreetAddress(OrderAddress orderAddress) {
         return new StreetAddress(
                 UUID.randomUUID(),
                 orderAddress.getStreet(),
@@ -166,7 +166,7 @@ public class OrderDataMapper {
                 .build();
     }
 
-    private List<OrderResponse.OrderItemResponse> orderItemsToOrderItemResponse(List<OrderItem> orderItems) {
+    public List<OrderResponse.OrderItemResponse> orderItemsToOrderItemResponse(List<OrderItem> orderItems) {
         return orderItems.stream()
                 .map(orderItem -> OrderResponse.OrderItemResponse.builder()
                         .product(productToProductResponse(orderItem.getProduct()))

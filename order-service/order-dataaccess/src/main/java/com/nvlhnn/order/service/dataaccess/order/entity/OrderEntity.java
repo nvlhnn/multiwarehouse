@@ -26,7 +26,7 @@ public class OrderEntity {
 
     private UUID userId;
 
-    @ManyToOne(fetch = FetchType.LAZY) // A warehouse can have multiple orders
+    @ManyToOne(fetch = FetchType.EAGER) // A warehouse can have multiple orders
     @JoinColumn(name = "warehouse_id", referencedColumnName = "id", nullable = false)
     private WarehouseEntity warehouse;
 

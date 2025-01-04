@@ -23,8 +23,8 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService{
     private static final String UTC = "UTC";
 
     @Override
-    public WarehouseCreatedEvent createWarehouse(Warehouse warehouse,
-                                                 DomainEventPublisher<WarehouseCreatedEvent> publisher) {
+    public WarehouseCreatedEvent validateAndInitializeWarehouse(Warehouse warehouse,
+                                                                DomainEventPublisher<WarehouseCreatedEvent> publisher) {
         warehouse.validateInitialWarehouse();
         warehouse.initializeWarehouse();
         log.info("Warehouse with id: {} is created", warehouse.getId().getValue());
@@ -32,10 +32,10 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService{
     }
 
     @Override
-    public WarehouseUpdatedEvent updateWarehouse(Warehouse warehouse,
-                                                 String newName,
-                                                 StreetAddress newStreetAddress,
-                                                 DomainEventPublisher<WarehouseUpdatedEvent> publisher) {
+    public WarehouseUpdatedEvent validateAndPatchWarehouse(Warehouse warehouse,
+                                                           String newName,
+                                                           StreetAddress newStreetAddress,
+                                                           DomainEventPublisher<WarehouseUpdatedEvent> publisher) {
         warehouse.validateWarehouse();
         warehouse.updateWarehouse(newName, newStreetAddress);
         log.info("Warehouse with id: {} is updated", warehouse.getId().getValue());
@@ -59,10 +59,10 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService{
 
 
     @Override
-    public StockCreatedEvent createStock(Stock stock,
-                                         Warehouse warehouse,
-                                         Product product,
-                                         DomainEventPublisher<StockCreatedEvent> publisher) {
+    public StockCreatedEvent validateAndInitializeStock(Stock stock,
+                                                        Warehouse warehouse,
+                                                        Product product,
+                                                        DomainEventPublisher<StockCreatedEvent> publisher) {
         stock.validateStock(true);
         stock.initializeStock(new WarehouseId(warehouse.getId().getValue()), new ProductId(product.getId().getValue()));
 
@@ -72,7 +72,7 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService{
     }
 
     @Override
-    public StockUpdatedEvent updateStock(Stock stock,  int quantity, DomainEventPublisher<StockUpdatedEvent> publisher) {
+    public StockUpdatedEvent validateAndPatchStock(Stock stock, int quantity, DomainEventPublisher<StockUpdatedEvent> publisher) {
         stock.validateStock(false);
 
         log.info("reducing stock for product id: {} with quantity: {} from current quantity: {} to new quantity: {}",

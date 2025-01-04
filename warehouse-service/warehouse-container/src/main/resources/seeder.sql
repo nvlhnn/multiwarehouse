@@ -20,9 +20,9 @@ INSERT INTO "user".users (id, email, name, role, token, is_active) VALUES
 TRUNCATE TABLE "product".products CASCADE;
 TRUNCATE TABLE "product".users CASCADE;
 -- Insert Products
-INSERT INTO "product".products (id, name, price, total_stock) VALUES
-('a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424', 'Product A', 50.00, 11),
-('ab5f89ff-d3f7-4d47-9701-dff66e1b058b', 'Product B', 30.00, 0);
+INSERT INTO "product".products (id, name, price, total_stock, image_url) VALUES
+('a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424', 'Orange', 50000, 11, 'https://static.vecteezy.com/system/resources/previews/051/587/964/non_2x/a-unique-design-icon-of-lemon-vector.jpg'),
+('ab5f89ff-d3f7-4d47-9701-dff66e1b058b', 'Cherry', 35000, 0, 'https://static.vecteezy.com/system/resources/previews/051/588/276/large_2x/an-icon-design-of-cherries-vector.jpg');
 -- insert users
 INSERT INTO "product".users (id, email, name, role, token, is_active) VALUES
 ('6159e2ec-8e62-412b-a47a-15bd43c28703', 'admin@mail.com', 'admin', 2, 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOiI2MTU5ZTJlYy04ZTYyLTQxMmItYTQ3YS0xNWJkNDNjMjg3MDMiLCJyb2xlIjoiU1VQRVJfQURNSU4iLCJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsImlhdCI6MTczMzc2MTYzMywiZXhwIjoxNzM1MjMyODYxfQ.S6vGYakry6moMeShsMmZKyvuBzK3z8U-8NQiloUTVC9YLjbj48F4QYTVEcmpFxh0qFgpiuuIJaWuUENBIrNpaw', true);
@@ -38,8 +38,8 @@ TRUNCATE TABLE "order".users CASCADE;
 
 -- Insert Products
 INSERT INTO "order".products (id, name, price) VALUES
-('a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424', 'Product A', 50.00),
-('ab5f89ff-d3f7-4d47-9701-dff66e1b058b', 'Product B', 30.00);
+('a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424', 'Orange', 50000),
+('ab5f89ff-d3f7-4d47-9701-dff66e1b058b', 'Cherry', 35000);
 -- insert users
 INSERT INTO "order".users (id, email, name, role, token, is_active) VALUES
 ('6159e2ec-8e62-412b-a47a-15bd43c28703', 'admin@mail.com', 'admin', 2, 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOiI2MTU5ZTJlYy04ZTYyLTQxMmItYTQ3YS0xNWJkNDNjMjg3MDMiLCJyb2xlIjoiU1VQRVJfQURNSU4iLCJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsImlhdCI6MTczMzc2MTYzMywiZXhwIjoxNzM1MjMyODYxfQ.S6vGYakry6moMeShsMmZKyvuBzK3z8U-8NQiloUTVC9YLjbj48F4QYTVEcmpFxh0qFgpiuuIJaWuUENBIrNpaw', true);
@@ -73,8 +73,8 @@ TRUNCATE TABLE "warehouse".warehouses CASCADE;
 TRUNCATE TABLE "warehouse".users CASCADE;
 -- Insert Products
 INSERT INTO "warehouse".products (id, name, price) VALUES
-('a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424', 'Product A', 50.00),
-('ab5f89ff-d3f7-4d47-9701-dff66e1b058b', 'Product B', 30.00);
+('a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424', 'Orange', 50000),
+('ab5f89ff-d3f7-4d47-9701-dff66e1b058b', 'Cherry', 35000);
 INSERT INTO "warehouse".users (id, email, name, role, token, is_active) VALUES
 ('6159e2ec-8e62-412b-a47a-15bd43c28703', 'admin@mail.com', 'admin', 2, 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOiI2MTU5ZTJlYy04ZTYyLTQxMmItYTQ3YS0xNWJkNDNjMjg3MDMiLCJyb2xlIjoiU1VQRVJfQURNSU4iLCJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsImlhdCI6MTczMzc2MTYzMywiZXhwIjoxNzM1MjMyODYxfQ.S6vGYakry6moMeShsMmZKyvuBzK3z8U-8NQiloUTVC9YLjbj48F4QYTVEcmpFxh0qFgpiuuIJaWuUENBIrNpaw', true);
 -- Insert Warehouses

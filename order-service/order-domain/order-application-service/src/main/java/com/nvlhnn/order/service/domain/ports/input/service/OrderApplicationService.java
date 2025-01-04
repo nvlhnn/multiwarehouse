@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 public interface OrderApplicationService {
-    CreateOrderResponse createOrder(@Valid CreateOrderCommand createOrderCommand, HttpServletRequest request);
+    CreateOrderResponse createOrder(@Valid CreateOrderCommand createOrderCommand);
 
     TrackOrderResponse trackOrder(@Valid TrackOrderQuery trackOrderQuery);
 
@@ -19,6 +19,8 @@ public interface OrderApplicationService {
     OrderListResponse getAllOrdersByCustomerId(String customerId, int page, int size);
 
     OrderStatsResponse getLastWeekOrderStat();
+
+    OrderResponse payment(String orderId);
 
 
 }

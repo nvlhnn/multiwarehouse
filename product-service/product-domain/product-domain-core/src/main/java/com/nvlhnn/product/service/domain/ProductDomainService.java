@@ -6,8 +6,8 @@ import com.nvlhnn.product.service.domain.event.ProductCreatedEvent;
 
 public interface ProductDomainService {
 
-    ProductCreatedEvent createProduct(Product product, DomainEventPublisher<ProductCreatedEvent> publisher);
+    ProductCreatedEvent initializeProduct(Product product, DomainEventPublisher<ProductCreatedEvent> publisher);
 
-    void updateProduct(Product product, Integer totalStock);
+    void patchProduct(Product product, Integer totalStock);
 
 }

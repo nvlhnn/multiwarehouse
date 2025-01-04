@@ -57,6 +57,12 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
+    public void payOrder(Order order) {
+        order.payOrder();
+        log.info("Order with id: {} is paid", order.getId().getValue());
+    }
+
+    @Override
     public void createUser(User user){
         user.validateUser();
         log.info("User with email: {} is created", user.getEmail());

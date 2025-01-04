@@ -9,6 +9,8 @@ import com.nvlhnn.order.service.domain.ports.output.repository.OrderRepository;
 import com.nvlhnn.order.service.domain.ports.output.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -37,7 +39,8 @@ public class OrderGetAllByCustomerIdCommandHanlder {
         }
 
         log.info("Listing orders for page: {} with size: {}", page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
         return orderDataMapper.ordersToOrderListResponse(
-                orderRepository.findByUserId(user.get().getId().getValue(), (PageRequest.of(page, size))));
+                orderRepository.findByUserId(user.get().getId().getValue(), (pageable)));
     }
 }

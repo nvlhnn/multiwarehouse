@@ -26,22 +26,27 @@ class OrderApplicationServiceImpl implements OrderApplicationService {
 
     private final OrderGetStatsCommandHandler orderGetStatsCommandHandler;
 
+    private final OrderPayment orderPayment;
+
     OrderApplicationServiceImpl(OrderCreateCommandHandler orderCreateCommandHandler,
                                 OrderTrackCommandHandler orderTrackCommandHandler,
                                 OrderGetAllCommandHandler orderGetAllCommandHandler,
                                 OrderGetStatsCommandHandler orderGetStatsCommandHandler,
-                                OrderGetAllByCustomerIdCommandHanlder orderGetAllByCustomerIdCommandHandler
+                                OrderGetAllByCustomerIdCommandHanlder orderGetAllByCustomerIdCommandHandler,
+                                OrderPayment orderPayment
+
     ) {
         this.orderCreateCommandHandler = orderCreateCommandHandler;
         this.orderTrackCommandHandler = orderTrackCommandHandler;
         this.orderGetAllCommandHandler = orderGetAllCommandHandler;
         this.orderGetAllByCustomerIdCommandHandler = orderGetAllByCustomerIdCommandHandler;
         this.orderGetStatsCommandHandler = orderGetStatsCommandHandler;
+        this.orderPayment = orderPayment;
     }
 
     @Override
-    public CreateOrderResponse createOrder(CreateOrderCommand createOrderCommand, HttpServletRequest request) {
-        return orderCreateCommandHandler.createOrder(createOrderCommand, request);
+    public CreateOrderResponse createOrder(CreateOrderCommand createOrderCommand) {
+        return orderCreateCommandHandler.createOrder(createOrderCommand);
     }
 
     @Override
@@ -69,4 +74,8 @@ class OrderApplicationServiceImpl implements OrderApplicationService {
         return orderGetStatsCommandHandler.getOrderStats();
     }
 
+    @Override
+    public OrderResponse payment(String orderId) {
+        return orderPayment.orderPayment(orderId);
+    }
 }

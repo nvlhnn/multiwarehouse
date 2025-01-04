@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -76,7 +75,7 @@ public class StockUpdateHelper {
         if (!existingStock.isPresent()) {
             // Create new stock if it doesn't exist
             Stock stock = warehouseDataMapper.createStockFromCreateUpdateStockCommand(updateStockCommand);
-            StockCreatedEvent stockCreatedEvent = warehouseDomainService.createStock(stock, warehouse.get(), product.get(), stockCreatedEventPublisher);
+            StockCreatedEvent stockCreatedEvent = warehouseDomainService.validateAndInitializeStock(stock, warehouse.get(), product.get(), stockCreatedEventPublisher);
             saveStock(stock);
 
             Integer productTotalQuantity = stockRepository.getProductTotalQuantity(new ProductId(updateStockCommand.getProductId()));
@@ -85,7 +84,7 @@ public class StockUpdateHelper {
             return stockCreatedEvent;  // Return the created event
         } else {
             // Update stock if it exists
-            StockUpdatedEvent stockUpdatedEvent = warehouseDomainService.updateStock(
+            StockUpdatedEvent stockUpdatedEvent = warehouseDomainService.validateAndPatchStock(
                     existingStock.get(),updateStockCommand.getQuantity(), stockUpdatedEventPublisher
             );
             saveStock(existingStock.get());

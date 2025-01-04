@@ -29,8 +29,8 @@ public class OrderCreateCommandHandler {
         this.orderCreatedPaymentRequestMessagePublisher = orderCreatedPaymentRequestMessagePublisher;
     }
 
-    public CreateOrderResponse createOrder(CreateOrderCommand createOrderCommand, HttpServletRequest request) {
-        OrderCreatedEvent orderCreatedEvent = orderCreateHelper.persistOrder(createOrderCommand, request);
+    public CreateOrderResponse createOrder(CreateOrderCommand createOrderCommand) {
+        OrderCreatedEvent orderCreatedEvent = orderCreateHelper.persistOrder(createOrderCommand);
         log.info("Order is created with id: {}", orderCreatedEvent.getOrder().getId().getValue());
         orderCreatedPaymentRequestMessagePublisher.publish(orderCreatedEvent);
         return orderDataMapper.orderToCreateOrderResponse(orderCreatedEvent.getOrder(),

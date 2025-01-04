@@ -7,7 +7,6 @@ import com.nvlhnn.warehouse.service.domain.entity.Stock;
 import com.nvlhnn.warehouse.service.domain.entity.Warehouse;
 import com.nvlhnn.warehouse.service.domain.event.StockUpdatedEvent;
 import com.nvlhnn.warehouse.service.domain.ports.output.message.publisher.StockUpdatedEventPublisher;
-import com.nvlhnn.warehouse.service.domain.ports.output.repository.StockRepository;
 import com.nvlhnn.warehouse.service.domain.exception.WarehouseDomainException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -80,7 +79,7 @@ public class OrderStockUpdateSaga {
             Stock currentStock = findStockForProduct(productId, stock);
 
             // Update stock and publish the event
-            StockUpdatedEvent stockUpdatedEvent = warehouseDomainService.updateStock(currentStock, stock.getQuantity(), stockUpdatedEventPublisher);
+            StockUpdatedEvent stockUpdatedEvent = warehouseDomainService.validateAndPatchStock(currentStock, stock.getQuantity(), stockUpdatedEventPublisher);
             sagaHelper.saveStock(currentStock);
 
             Integer productTotalQuantity = sagaHelper.getProductTotalQuantity(currentStock.getProductId());

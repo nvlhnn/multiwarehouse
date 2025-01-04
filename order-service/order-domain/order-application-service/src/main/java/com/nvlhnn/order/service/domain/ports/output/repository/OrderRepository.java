@@ -24,4 +24,8 @@ public interface OrderRepository {
     Page<Order> findByUserId(UUID userId, Pageable pageable); // Add pagination support>
 
     List<Object[]> findTotalOrdersByDay(LocalDate startDate, LocalDate endDate);
+
+    int payOrder(Order order);
+
+    Optional<Order> findByIdWithItems(OrderId orderId);
 }

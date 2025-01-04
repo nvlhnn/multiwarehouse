@@ -19,4 +19,6 @@ public interface OrderDomainService {
 
     void createUser(User user);
 
+    void payOrder(Order order);
+
 }

@@ -15,7 +15,7 @@ public class ProductDomainServiceImpl implements ProductDomainService {
     private static final String UTC = "UTC";
 
     @Override
-    public ProductCreatedEvent createProduct(Product product, DomainEventPublisher<ProductCreatedEvent> publisher) {
+    public ProductCreatedEvent initializeProduct(Product product, DomainEventPublisher<ProductCreatedEvent> publisher) {
         product.validateProduct();
         product.initializeProduct();
 
@@ -24,7 +24,7 @@ public class ProductDomainServiceImpl implements ProductDomainService {
     }
 
     @Override
-    public void updateProduct(Product product, Integer totalStock) {
+    public void patchProduct(Product product, Integer totalStock) {
         product.updateTotalStock(totalStock);
         log.info("Product with id: {} is updated", product.getId());
     }

@@ -71,6 +71,10 @@ public class Order extends AggregateRoot<OrderId> {
         updateFailureMessages(failureMessages);
     }
 
+    public void payOrder() {
+        orderStatus = OrderStatus.PAID;
+    }
+
     private void updateFailureMessages(List<String> failureMessages) {
         if (this.failureMessages != null && failureMessages != null) {
             this.failureMessages.addAll(failureMessages.stream().filter(message -> !message.isEmpty()).toList());

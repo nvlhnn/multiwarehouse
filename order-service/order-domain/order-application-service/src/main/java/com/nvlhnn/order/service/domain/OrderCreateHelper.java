@@ -56,13 +56,13 @@ public class OrderCreateHelper {
     }
 
     @Transactional
-    public OrderCreatedEvent persistOrder(CreateOrderCommand createOrderCommand, HttpServletRequest request) {
+    public OrderCreatedEvent persistOrder(CreateOrderCommand createOrderCommand) {
 
         // check user
-        Optional<User> optionalUser = userRepository.findById(new UserId(UUID.fromString(request.getAttribute("userId").toString())));
+        Optional<User> optionalUser = userRepository.findById(new UserId(createOrderCommand.getUserId()));
         if (optionalUser.isEmpty()) {
-            log.warn("Could not find user with user id: {}", request.getAttribute("userId"));
-            throw new OrderDomainException("Could not find user with user id: " + request.getAttribute("userId"));
+            log.warn("Could not find user with user id: {}", createOrderCommand.getUserId().toString());
+            throw new OrderDomainException("Could not find user with user id: " + createOrderCommand.getUserId().toString());
         }
 
         // get nearest warehouse

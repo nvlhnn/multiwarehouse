@@ -2,9 +2,7 @@ package com.nvlhnn.product.service.domain;
 
 import com.nvlhnn.domain.valueobject.ProductId;
 import com.nvlhnn.product.service.domain.dto.message.StockResponseMessage;
-import com.nvlhnn.product.service.domain.dto.message.UserResponseMessage;
 import com.nvlhnn.product.service.domain.entity.Product;
-import com.nvlhnn.product.service.domain.entity.User;
 import com.nvlhnn.product.service.domain.exception.ProductDomainException;
 import com.nvlhnn.product.service.domain.mapper.ProductDataMapper;
 import com.nvlhnn.product.service.domain.ports.input.message.listener.warehouse.WarehouseServiceMessageListener;
@@ -34,7 +32,7 @@ public class WarehouseServiceMessageListenerImpl implements WarehouseServiceMess
     public void onStockSaved(StockResponseMessage stockResponseMessage) {
 
         Product product = productRepository.findById(new ProductId(UUID.fromString(stockResponseMessage.getProductId()))).orElseThrow(() -> new ProductDomainException("Product not found."));
-        productDomainService.updateProduct(product, stockResponseMessage.getTotalStockQuantity());
+        productDomainService.patchProduct(product, stockResponseMessage.getTotalStockQuantity());
 
         Product savedProduct = productRepository.save(product);
         if (savedProduct == null) {
