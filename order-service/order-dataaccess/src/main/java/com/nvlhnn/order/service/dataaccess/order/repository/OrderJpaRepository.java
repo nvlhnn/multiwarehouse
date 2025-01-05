@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,5 +49,11 @@ public interface OrderJpaRepository extends JpaRepository<OrderEntity, UUID> {
     @Query("UPDATE OrderEntity o SET o.orderStatus = :orderStatus WHERE o.id = :orderId")
     int payOrder(@Param("orderId") UUID orderId, @Param("orderStatus") OrderStatus orderStatus);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE OrderEntity o SET o.orderStatus = :orderStatus WHERE o.id = :orderId")
+    int cancelOrder(@Param("orderId") UUID orderId, @Param("orderStatus") OrderStatus orderStatus);
 
+    @Query("SELECT o FROM OrderEntity o WHERE o.expiredAt < :currentDate AND o.orderStatus = :orderStatus")
+    Optional<List<OrderEntity>> findExpiredOrders(@Param("currentDate") Date currentDate, @Param("orderStatus") OrderStatus orderStatus);
 }

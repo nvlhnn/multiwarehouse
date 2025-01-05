@@ -22,5 +22,7 @@ public interface OrderApplicationService {
 
     OrderResponse payment(String orderId);
 
+    void cancel();
+
 
 }

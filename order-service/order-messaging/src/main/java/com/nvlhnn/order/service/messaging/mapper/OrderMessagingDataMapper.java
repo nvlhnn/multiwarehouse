@@ -3,6 +3,8 @@ package com.nvlhnn.order.service.messaging.mapper;
 import com.nvlhnn.order.service.domain.dto.message.*;
 import com.nvlhnn.order.service.domain.entity.Order;
 import com.nvlhnn.order.service.domain.event.OrderCreatedEvent;
+import com.nvlhnn.order.service.domain.event.OrderPaymentEvent;
+import com.nvlhnn.payment.kafka.avro.model.PaymentResponseAvroModel;
 import com.nvlhnn.product.kafka.avro.model.ProductResponseAvroModel;
 import com.nvlhnn.user.kafka.avro.model.UserResponseAvroModel;
 import com.nvlhnn.warehouse.kafka.avro.model.StockCreatedAvroModel;
@@ -120,4 +122,23 @@ public class OrderMessagingDataMapper {
                 .build();
     }
 
+    public PaymentResponseAvroModel orderToPaymentResponseAvroModel(OrderPaymentEvent orderPaymentEvent) {
+        return PaymentResponseAvroModel.newBuilder()
+                .setId(UUID.randomUUID())
+                .setSagaId(UUID.randomUUID())
+                .setOrderId(orderPaymentEvent.getOrder().getId().getValue())
+                .setCreatedAt(orderPaymentEvent.getCreatedAt().toInstant())
+                .setOrderStatus(mapOrderStatusPayment(orderPaymentEvent.getOrder().getOrderStatus()))
+                .build();
+    }
+
+    private com.nvlhnn.payment.kafka.avro.model.OrderStatus mapOrderStatusPayment(com.nvlhnn.domain.valueobject.OrderStatus orderStatus) {
+        return switch (orderStatus) {
+            case PENDING -> com.nvlhnn.payment.kafka.avro.model.OrderStatus.PENDING;
+            case PAID -> com.nvlhnn.payment.kafka.avro.model.OrderStatus.PAID;
+            case APPROVED -> com.nvlhnn.payment.kafka.avro.model.OrderStatus.APPROVED;
+            case CANCELLING -> com.nvlhnn.payment.kafka.avro.model.OrderStatus.CANCELLING;
+            case CANCELLED -> com.nvlhnn.payment.kafka.avro.model.OrderStatus.CANCELLED;
+        };
+    }
 }

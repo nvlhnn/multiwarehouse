@@ -28,12 +28,15 @@ class OrderApplicationServiceImpl implements OrderApplicationService {
 
     private final OrderPayment orderPayment;
 
+    private final OrderCancel orderCancel;
+
     OrderApplicationServiceImpl(OrderCreateCommandHandler orderCreateCommandHandler,
                                 OrderTrackCommandHandler orderTrackCommandHandler,
                                 OrderGetAllCommandHandler orderGetAllCommandHandler,
                                 OrderGetStatsCommandHandler orderGetStatsCommandHandler,
                                 OrderGetAllByCustomerIdCommandHanlder orderGetAllByCustomerIdCommandHandler,
-                                OrderPayment orderPayment
+                                OrderPayment orderPayment,
+                                OrderCancel orderCancel
 
     ) {
         this.orderCreateCommandHandler = orderCreateCommandHandler;
@@ -42,6 +45,7 @@ class OrderApplicationServiceImpl implements OrderApplicationService {
         this.orderGetAllByCustomerIdCommandHandler = orderGetAllByCustomerIdCommandHandler;
         this.orderGetStatsCommandHandler = orderGetStatsCommandHandler;
         this.orderPayment = orderPayment;
+        this.orderCancel = orderCancel;
     }
 
     @Override
@@ -77,5 +81,10 @@ class OrderApplicationServiceImpl implements OrderApplicationService {
     @Override
     public OrderResponse payment(String orderId) {
         return orderPayment.orderPayment(orderId);
+    }
+
+    @Override
+    public void cancel() {
+        orderCancel.orderCancel();
     }
 }

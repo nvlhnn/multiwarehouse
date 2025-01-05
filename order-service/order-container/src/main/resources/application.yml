@@ -12,6 +12,7 @@ order-service:
   warehouse-created-topic-name:  warehouse-created
   stock-created-topic-name:  stock-created
   stock-updated-topic-name:  stock-updated
+  payment-response-topic-name: payment-response
 
 spring:
   jpa:

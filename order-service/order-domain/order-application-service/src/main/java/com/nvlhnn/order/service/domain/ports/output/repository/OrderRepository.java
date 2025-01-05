@@ -28,4 +28,8 @@ public interface OrderRepository {
     int payOrder(Order order);
 
     Optional<Order> findByIdWithItems(OrderId orderId);
+
+    Optional<List<Order>> findExpiredOrders();
+
+    int cancelOrder(Order order);
 }

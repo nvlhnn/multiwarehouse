@@ -8,6 +8,8 @@ import com.nvlhnn.order.service.domain.valueobject.StreetAddress;
 import com.nvlhnn.order.service.domain.valueobject.TrackingId;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,6 +26,8 @@ public class Order extends AggregateRoot<OrderId> {
 
     private TrackingId trackingId;
     private OrderStatus orderStatus;
+
+    private Date expiredAt;
     private List<String> failureMessages;
 
     public static final String FAILURE_MESSAGE_DELIMITER = ",";
@@ -32,6 +36,7 @@ public class Order extends AggregateRoot<OrderId> {
         setId(new OrderId(UUID.randomUUID()));
         trackingId = new TrackingId(UUID.randomUUID());
         orderStatus = OrderStatus.PENDING;
+        expiredAt = Date.from(ZonedDateTime.now().plusDays(1).toInstant());
         initializeOrderItems();
     }
 
@@ -73,6 +78,20 @@ public class Order extends AggregateRoot<OrderId> {
 
     public void payOrder() {
         orderStatus = OrderStatus.PAID;
+    }
+
+    public void validatePayOrder(){
+        if (orderStatus != OrderStatus.PENDING) {
+            throw new OrderDomainException("Order is not in correct state for pay operation!");
+        }
+
+        if (expiredAt != null && expiredAt.before(new Date())) {
+            throw new OrderDomainException("Order is expired!");
+        }
+    }
+
+    public void cancelOrder() {
+        orderStatus = OrderStatus.CANCELLED;
     }
 
     private void updateFailureMessages(List<String> failureMessages) {
@@ -204,6 +223,8 @@ public class Order extends AggregateRoot<OrderId> {
         trackingId = builder.trackingId;
         orderStatus = builder.orderStatus;
         failureMessages = builder.failureMessages;
+        expiredAt = builder.expiredAt;
+
     }
 
     public static Builder builder() {
@@ -242,6 +263,10 @@ public class Order extends AggregateRoot<OrderId> {
         return failureMessages;
     }
 
+    public Date getExpiredAt() {
+        return expiredAt;
+    }
+
     public static final class Builder {
         private OrderId orderId;
         private UserId userId;
@@ -252,6 +277,7 @@ public class Order extends AggregateRoot<OrderId> {
         private TrackingId trackingId;
         private OrderStatus orderStatus;
         private List<String> failureMessages;
+        private Date expiredAt;
 
         private Builder() {
         }
@@ -298,6 +324,11 @@ public class Order extends AggregateRoot<OrderId> {
 
         public Builder failureMessages(List<String> val) {
             failureMessages = val;
+            return this;
+        }
+
+        public Builder expiredAt(Date val) {
+            expiredAt = val;
             return this;
         }
 

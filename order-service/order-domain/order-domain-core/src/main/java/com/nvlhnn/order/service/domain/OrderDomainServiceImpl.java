@@ -5,6 +5,7 @@ import com.nvlhnn.domain.valueobject.ProductId;
 import com.nvlhnn.domain.valueobject.WarehouseId;
 import com.nvlhnn.order.service.domain.entity.*;
 import com.nvlhnn.order.service.domain.event.OrderCreatedEvent;
+import com.nvlhnn.order.service.domain.event.OrderPaymentEvent;
 import com.nvlhnn.order.service.domain.exception.OrderDomainException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,9 +58,18 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
-    public void payOrder(Order order) {
+    public OrderPaymentEvent payOrder(Order order, DomainEventPublisher<OrderPaymentEvent> orderPaymentEventDomainEventPublisher) {
+        order.validatePayOrder();
         order.payOrder();
         log.info("Order with id: {} is paid", order.getId().getValue());
+        return new OrderPaymentEvent(order, ZonedDateTime.now(ZoneId.of(UTC)), orderPaymentEventDomainEventPublisher);
+    }
+
+    @Override
+    public OrderPaymentEvent cancelOrder(Order order, DomainEventPublisher<OrderPaymentEvent> orderPaymentEventDomainEventPublisher) {
+        order.cancelOrder();
+        log.info("Order with id: {} is cancelled", order.getId().getValue());
+        return new OrderPaymentEvent(order, ZonedDateTime.now(ZoneId.of(UTC)), orderPaymentEventDomainEventPublisher);
     }
 
     @Override

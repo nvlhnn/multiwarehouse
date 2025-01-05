@@ -32,6 +32,7 @@ public class OrderDataAccessMapper {
                 .warehouse(order.getWarehouse().getId() != null ? WarehouseEntity.builder()
                         .id(order.getWarehouse().getId().getValue())
                         .build() : null)
+                .expiredAt(order.getExpiredAt())
                 .trackingId(order.getTrackingId().getValue())
                 .address(deliveryAddressToAddressEntity(order.getDeliveryAddress()))
                 .price(order.getPrice().getAmount())
@@ -54,12 +55,25 @@ public class OrderDataAccessMapper {
                 .warehouse(orderEntity.getWarehouse() != null ? warehouseEntityToWarehouse(orderEntity.getWarehouse()) : null)
                 .deliveryAddress(addressEntityToDeliveryAddress(orderEntity.getAddress()))
                 .price(new Money(orderEntity.getPrice()))
+                .expiredAt(orderEntity.getExpiredAt())
                 .items(orderItemEntitiesToOrderItems(orderEntity.getItems()))
                 .trackingId(new TrackingId(orderEntity.getTrackingId()))
                 .orderStatus(orderEntity.getOrderStatus())
                 .failureMessages(orderEntity.getFailureMessages().isEmpty() ? new ArrayList<>() :
                         new ArrayList<>(Arrays.asList(orderEntity.getFailureMessages()
                                 .split(Order.FAILURE_MESSAGE_DELIMITER))))
+                .build();
+    }
+
+    public Order orderEntityToOrderExpiring(OrderEntity orderEntity) {
+        return Order.builder()
+                .orderId(new OrderId(orderEntity.getId()))
+                .userId(new UserId(orderEntity.getUserId()))
+                .warehouse(orderEntity.getWarehouse() != null ? warehouseEntityToWarehouse(orderEntity.getWarehouse()) : null)
+                .deliveryAddress(addressEntityToDeliveryAddress(orderEntity.getAddress()))
+                .price(new Money(orderEntity.getPrice()))
+                .trackingId(new TrackingId(orderEntity.getTrackingId()))
+                .orderStatus(orderEntity.getOrderStatus())
                 .build();
     }
 

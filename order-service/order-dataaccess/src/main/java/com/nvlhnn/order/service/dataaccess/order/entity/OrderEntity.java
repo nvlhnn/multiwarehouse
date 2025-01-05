@@ -37,6 +37,8 @@ public class OrderEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    private Date expiredAt;
+
     private String failureMessages;
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)

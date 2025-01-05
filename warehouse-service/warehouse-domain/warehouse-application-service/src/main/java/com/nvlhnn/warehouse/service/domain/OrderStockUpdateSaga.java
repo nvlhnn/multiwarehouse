@@ -1,5 +1,6 @@
 package com.nvlhnn.warehouse.service.domain;
 
+import com.nvlhnn.domain.valueobject.OrderId;
 import com.nvlhnn.domain.valueobject.ProductId;
 import com.nvlhnn.domain.valueobject.WarehouseId;
 import com.nvlhnn.warehouse.service.domain.dto.message.OrderResponse;
@@ -46,9 +47,11 @@ public class OrderStockUpdateSaga {
         // Find all stocks related to the products in the order
         List<Stock> stocks = findStocksByProductIds(productIds);
 
+        OrderId orderId = new OrderId(UUID.fromString(orderResponse.getOrderId()));
+
         // Process each product in the order and update stock
         for (OrderResponse.ProductQuantity product : orderResponse.getProducts()) {
-            updateStockForProduct(warehouse, product, stocks);
+            updateStockForProduct(warehouse, product, stocks, orderId);
         }
     }
 
@@ -71,7 +74,7 @@ public class OrderStockUpdateSaga {
         return stocksOptional.get();
     }
 
-    private void updateStockForProduct(Warehouse warehouse, OrderResponse.ProductQuantity product, List<Stock> stocks) {
+    private void updateStockForProduct(Warehouse warehouse, OrderResponse.ProductQuantity product, List<Stock> stocks, OrderId orderId) {
         ProductId productId = new ProductId(UUID.fromString(product.getProductId()));
         List<Stock> stocksToUpdate = findAndTransferStock(warehouse.getId(), stocks, productId, product.getQuantity());
 
@@ -86,7 +89,10 @@ public class OrderStockUpdateSaga {
             productTotalQuantity = productTotalQuantity != null ? productTotalQuantity : 0;
             stockUpdatedEvent.setProductTotalQuantity(productTotalQuantity);
 
+            // save order stock mutation
+            sagaHelper.saveOrderStockMutation(warehouseDomainService.validateAndInitiateOrderStockMutation(orderId, stock, -stock.getQuantity()));
 
+            log.info("product total quantity is {}", productTotalQuantity);
             stockUpdatedEventPublisher.publish(stockUpdatedEvent);
             log.info("Updated stock for product id: {} in warehouse id: {} with new quantity: {}",
                     product.getProductId(), warehouse.getId().getValue(), stock.getQuantity());

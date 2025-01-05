@@ -77,4 +77,10 @@ public class OrderController {
         OrderResponse orderResponse = orderApplicationService.payment(orderId.toString());
         return ResponseEntity.ok(orderResponse);
     }
+
+    @PostMapping("/expiring")
+    public ResponseEntity<Object> cancel() {
+        orderApplicationService.cancel();
+        return ResponseEntity.ok().build();
+    }
 }

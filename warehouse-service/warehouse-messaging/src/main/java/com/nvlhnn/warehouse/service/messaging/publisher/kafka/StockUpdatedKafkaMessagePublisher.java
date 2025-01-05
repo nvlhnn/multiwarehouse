@@ -12,6 +12,8 @@ import com.nvlhnn.warehouse.service.messaging.mapper.WarehouseMessagingDataMappe
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Slf4j
 @Component
 public class StockUpdatedKafkaMessagePublisher implements StockUpdatedEventPublisher {
@@ -42,7 +44,7 @@ public class StockUpdatedKafkaMessagePublisher implements StockUpdatedEventPubli
                     .stockUpdatedEventToStockUpdatedAvroModel(domainEvent);
 
             kafkaProducer.send(warehouseServiceConfigData.getStockUpdatedTopicName(),
-                    stockId,
+                    domainEvent.getStock().getProductId().getValue().toString(),
                     stockUpdatedAvroModel,
                     kafkaMessageHelper.getKafkaCallback(
                             warehouseServiceConfigData.getStockUpdatedTopicName(),

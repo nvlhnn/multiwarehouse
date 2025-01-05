@@ -1,31 +1,9 @@
-DROP SCHEMA IF EXISTS "warehouse" CASCADE;
-CREATE SCHEMA "warehouse";
-DROP SCHEMA IF EXISTS "order" CASCADE;
-CREATE SCHEMA "order";
-DROP SCHEMA IF EXISTS "user" CASCADE;
-CREATE SCHEMA "user";
-DROP SCHEMA IF EXISTS "product" CASCADE;
-CREATE SCHEMA "product";
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
-
--- user service
-TRUNCATE TABLE "user".users CASCADE;
--- insert users
-INSERT INTO "user".users (id, email, name, role, token, is_active) VALUES
-('6159e2ec-8e62-412b-a47a-15bd43c28703', 'admin@mail.com', 'admin', 2, 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOiI2MTU5ZTJlYy04ZTYyLTQxMmItYTQ3YS0xNWJkNDNjMjg3MDMiLCJyb2xlIjoiU1VQRVJfQURNSU4iLCJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsImlhdCI6MTczMzc2MTYzMywiZXhwIjoxNzM1MjMyODYxfQ.S6vGYakry6moMeShsMmZKyvuBzK3z8U-8NQiloUTVC9YLjbj48F4QYTVEcmpFxh0qFgpiuuIJaWuUENBIrNpaw', true);
-
--- product service
 TRUNCATE TABLE "product".products CASCADE;
-TRUNCATE TABLE "product".users CASCADE;
 -- Insert Products
 INSERT INTO "product".products (id, name, price, total_stock, image_url) VALUES
 ('a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424', 'Orange', 50000, 11, 'https://static.vecteezy.com/system/resources/previews/051/587/964/non_2x/a-unique-design-icon-of-lemon-vector.jpg'),
 ('ab5f89ff-d3f7-4d47-9701-dff66e1b058b', 'Cherry', 35000, 0, 'https://static.vecteezy.com/system/resources/previews/051/588/276/large_2x/an-icon-design-of-cherries-vector.jpg');
--- insert users
-INSERT INTO "product".users (id, email, name, role, token, is_active) VALUES
-('6159e2ec-8e62-412b-a47a-15bd43c28703', 'admin@mail.com', 'admin', 2, 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOiI2MTU5ZTJlYy04ZTYyLTQxMmItYTQ3YS0xNWJkNDNjMjg3MDMiLCJyb2xlIjoiU1VQRVJfQURNSU4iLCJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsImlhdCI6MTczMzc2MTYzMywiZXhwIjoxNzM1MjMyODYxfQ.S6vGYakry6moMeShsMmZKyvuBzK3z8U-8NQiloUTVC9YLjbj48F4QYTVEcmpFxh0qFgpiuuIJaWuUENBIrNpaw', true);
 
 
 
@@ -33,7 +11,6 @@ INSERT INTO "product".users (id, email, name, role, token, is_active) VALUES
 TRUNCATE TABLE "order".stocks CASCADE;
 TRUNCATE TABLE "order".products CASCADE;
 TRUNCATE TABLE "order".warehouses CASCADE;
-TRUNCATE TABLE "order".users CASCADE;
 TRUNCATE TABLE "order".orders CASCADE;
 TRUNCATE TABLE "order".order_items CASCADE;
 TRUNCATE TABLE "order".order_address CASCADE;
@@ -43,9 +20,6 @@ TRUNCATE TABLE "order".order_address CASCADE;
 INSERT INTO "order".products (id, name, price) VALUES
 ('a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424', 'Orange', 50000),
 ('ab5f89ff-d3f7-4d47-9701-dff66e1b058b', 'Cherry', 35000);
--- insert users
-INSERT INTO "order".users (id, email, name, role, token, is_active) VALUES
-('6159e2ec-8e62-412b-a47a-15bd43c28703', 'admin@mail.com', 'admin', 2, 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOiI2MTU5ZTJlYy04ZTYyLTQxMmItYTQ3YS0xNWJkNDNjMjg3MDMiLCJyb2xlIjoiU1VQRVJfQURNSU4iLCJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsImlhdCI6MTczMzc2MTYzMywiZXhwIjoxNzM1MjMyODYxfQ.S6vGYakry6moMeShsMmZKyvuBzK3z8U-8NQiloUTVC9YLjbj48F4QYTVEcmpFxh0qFgpiuuIJaWuUENBIrNpaw', true);
 -- Insert Warehouses
 INSERT INTO "order".warehouses (id, name, is_active, city, latitude, longitude) VALUES
 ('f6d3cb47-1167-4d89-bb4e-bc82a3c9cbf9', 'Warehouse A', TRUE, 'City A', 37.7749, -122.4194), -- 1 unit of stock
@@ -73,14 +47,11 @@ TRUNCATE TABLE "warehouse".stocks CASCADE;
 TRUNCATE TABLE "warehouse".products CASCADE;
 TRUNCATE TABLE "warehouse".warehouse_address CASCADE;
 TRUNCATE TABLE "warehouse".warehouses CASCADE;
-TRUNCATE TABLE "warehouse".users CASCADE;
 TRUNCATE TABLE "warehouse".order_stock_mutations CASCADE;
 -- Insert Products
 INSERT INTO "warehouse".products (id, name, price) VALUES
 ('a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424', 'Orange', 50000),
 ('ab5f89ff-d3f7-4d47-9701-dff66e1b058b', 'Cherry', 35000);
-INSERT INTO "warehouse".users (id, email, name, role, token, is_active) VALUES
-('6159e2ec-8e62-412b-a47a-15bd43c28703', 'admin@mail.com', 'admin', 2, 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOiI2MTU5ZTJlYy04ZTYyLTQxMmItYTQ3YS0xNWJkNDNjMjg3MDMiLCJyb2xlIjoiU1VQRVJfQURNSU4iLCJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsImlhdCI6MTczMzc2MTYzMywiZXhwIjoxNzM1MjMyODYxfQ.S6vGYakry6moMeShsMmZKyvuBzK3z8U-8NQiloUTVC9YLjbj48F4QYTVEcmpFxh0qFgpiuuIJaWuUENBIrNpaw', true);
 -- Insert Warehouses
 INSERT INTO "warehouse".warehouses (id, name, is_active) VALUES
 ('f6d3cb47-1167-4d89-bb4e-bc82a3c9cbf9', 'Warehouse A', TRUE),

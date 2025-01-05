@@ -6,6 +6,7 @@ import com.nvlhnn.order.service.domain.entity.Stock;
 import com.nvlhnn.order.service.domain.entity.User;
 import com.nvlhnn.order.service.domain.entity.Warehouse;
 import com.nvlhnn.order.service.domain.event.OrderCreatedEvent;
+import com.nvlhnn.order.service.domain.event.OrderPaymentEvent;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,8 @@ public interface OrderDomainService {
 
     void createUser(User user);
 
-    void payOrder(Order order);
+    OrderPaymentEvent payOrder(Order order, DomainEventPublisher<OrderPaymentEvent> orderPaymentEventDomainEventPublisher);
+
+    OrderPaymentEvent cancelOrder(Order order, DomainEventPublisher<OrderPaymentEvent> orderPaymentEventDomainEventPublisher);
 
 }

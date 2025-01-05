@@ -2,10 +2,12 @@ package com.nvlhnn.warehouse.service.domain;
 
 import com.nvlhnn.domain.valueobject.ProductId;
 import com.nvlhnn.domain.valueobject.WarehouseId;
+import com.nvlhnn.warehouse.service.domain.entity.OrderStockMutation;
 import com.nvlhnn.warehouse.service.domain.entity.Product;
 import com.nvlhnn.warehouse.service.domain.entity.Stock;
 import com.nvlhnn.warehouse.service.domain.entity.Warehouse;
 import com.nvlhnn.warehouse.service.domain.exception.WarehouseDomainException;
+import com.nvlhnn.warehouse.service.domain.ports.output.repository.OrderStockMutationRepository;
 import com.nvlhnn.warehouse.service.domain.ports.output.repository.ProductRepository;
 import com.nvlhnn.warehouse.service.domain.ports.output.repository.StockRepository;
 import com.nvlhnn.warehouse.service.domain.ports.output.repository.WarehouseRepository;
@@ -23,11 +25,13 @@ public class WarehouseSagaHelper {
     private final WarehouseRepository warehouseRepository;
     private final StockRepository stockRepository;
     private final ProductRepository productRepository;
+    private final OrderStockMutationRepository orderStockMutationRepository;
 
-    public WarehouseSagaHelper(WarehouseRepository warehouseRepository, StockRepository stockRepository, ProductRepository productRepository) {
+    public WarehouseSagaHelper(WarehouseRepository warehouseRepository, StockRepository stockRepository, ProductRepository productRepository, OrderStockMutationRepository orderStockMutationRepository) {
         this.warehouseRepository = warehouseRepository;
         this.stockRepository = stockRepository;
         this.productRepository = productRepository;
+        this.orderStockMutationRepository = orderStockMutationRepository;
     }
 
     public Warehouse findWarehouse(String warehouseId) {
@@ -55,5 +59,9 @@ public class WarehouseSagaHelper {
 
     public Integer getProductTotalQuantity(ProductId productId) {
         return stockRepository.getProductTotalQuantity(productId);
+    }
+
+    public void saveOrderStockMutation(OrderStockMutation orderStockMutation) {
+        orderStockMutationRepository.save(orderStockMutation);
     }
 }
