@@ -1,67 +1,195 @@
-# Multi Warehouse Kafka Example
+# Multi-Warehouse E-Commerce Microservice
 
-This application demonstrates how to use Kafka in a microservices architecture with warehouse and order services. It shows how to integrate Kafka for event-driven communication between these services.
+This application demonstrates a Java-based multi-warehouse e-commerce system built with a microservices architecture and event-driven design using Kafka. The system includes product, user, warehouse, and order services, with Kubernetes deployment support.
+
+---
+
+## High-Level System Architecture
+
+- The application leverages an event-driven architecture using Kafka.
+- Each service is independent and communicates via Kafka topics for scalability and resilience.
+- High-level design includes the following services:
+    - **Product Service**: Manages product catalog.
+    - **User Service**: Handles user authentication.
+    - **Warehouse Service**: Manages warehouses and their inventory.
+    - **Order Service**: Handles order processing and status updates.
+
+System architecture images:
+
+1. **High-Level System Design**:
+   ![high level system design](./documentation/high_level_system_design.png)
+2. **Low-Level System Design**:
+   ![low level system design](./documentation/low_level_system_design.png)
+
+---
 
 ## Prerequisites
 
-Before running the application, ensure you have the following:
+Ensure the following dependencies are installed:
 
-- Docker installed
-- Kafka and Zookeeper up and running
-- Database and schema setup for `order` and `warehouse` services
+- Docker and Docker Compose
+- Kubernetes CLI (kubectl)
+- Helm (for Kafka setup)
+- Java JDK (appropriate version for the services)
+- Kafka and Zookeeper
 
-## How to Run
+---
 
-Follow these steps to get the application up and running:
+## Services Overview
 
-### 1. Create Database and Schema for Order and Warehouse Services
+### Product Service
+- Manages product catalog and inventory.
+- Communicates product updates via Kafka.
 
-Make sure you have the necessary databases and schemas for both the `order` and `warehouse` services. You can create them manually or use migration tools depending on your stack.
+**Database Design**:
+![Product Service Database Design](./documentation/product_service_db_design.png)
 
-### 2. Update `application.yml` in Order-Service and Warehouse-Service
+**Domain Design**:
+![Product Service Domain Design](./documentation/product_service_domain_design.png)
+- Manages product catalog and inventory.
+- Communicates product updates via Kafka.
 
-In both `order-service` and `warehouse-service`, update the `application.yml` configuration file to match your environment settings. This typically involves setting up the Kafka server address, database connection strings, and other configurations specific to your services.
+**Swagger Documentation**: [Product Service API Docs](http://localhost:8185/product/swagger-ui.html)
 
-### 3. Run Zookeeper
+### User Service
+- Manages user profiles, authentication, and roles.
+- Issues JWT tokens for secure communication.
 
-Zookeeper is required by Kafka for distributed coordination. To start Zookeeper, use Docker Compose with the following command:
+**Database Design**:
+![User Service Database Design](./documentation/user_service_db_design.png)
+
+**Domain Design**:
+![User Service Domain Design](./documentation/user_service_domain_design.png)
+- Manages user profiles, authentication, and roles.
+- Issues JWT tokens for secure communication.
+
+**Swagger Documentation**: [User Service API Docs](http://localhost:8183/user/swagger-ui.html)
+
+
+### Warehouse Service
+- Manages warehouse details and inventory synchronization.
+- Consumes product updates and publishes inventory changes.
+
+**Database Design**:
+![Warehouse Service Database Design](./documentation/warehouse_service_db_design.png)
+
+**Domain Design**:
+![Warehouse Service Domain Design](./documentation/warehouse_service_domain_design.png)
+- Manages warehouse details and inventory synchronization.
+- Consumes product updates and publishes inventory changes.
+
+**Swagger Documentation**: [Warehouse Service API Docs](http://localhost:8181/warehouse/swagger-ui.html)
+
+
+### Order Service
+- Processes customer orders.
+- Consumes warehouse inventory updates and manages order statuses.
+
+**Database Design**:
+![Order Service Database Design](./documentation/order_service_db_design.png)
+
+**Domain Design**:
+![Order Service Domain Design](./documentation/order_service_domain_design.png)
+- Processes customer orders.
+- Consumes warehouse inventory updates and manages order statuses.
+
+**Swagger Documentation**: [Order Service API Docs](http://localhost:8182/order/swagger-ui.html)
+
+
+---
+
+## Setting Up Locally
+
+### 1. Configure the Database and `application.yml`
+
+Each service requires a database configuration. Ensure the following steps are completed:
+
+1. Create databases and schemas for `order-service`, `warehouse-service`, `product-service`, and `user-service`.
+2. Update the `application.yml` configuration file in each service with:
+    - Database connection details (host, port, username, password, and schema).
+    - Kafka configuration (bootstrap servers and topic names).
+    - Any additional service-specific settings.
+
+Example `application.yml` snippet for database configuration:
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/<database_name>
+    username: <db_user>
+    password: <db_password>
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+```
+
+### 2. Start Zookeeper and Kafka Cluster
+
+Navigate to the `infrastructure/docker-compose` directory:
 
 ```bash
-/infrastructure/docker-compose/ docker compose -f common.yml -f zookeeper.yml up
+cd ./infrastructure/docker-compose
 ```
-This will start the Zookeeper service as part of your Docker containers.
-
-### 4. Run Kafka Cluster
-Next, run Kafka, which is the message broker for your services. Use the following command to start Kafka:
 
 ```bash
-/infrastructure/docker-compose/ docker compose -f common.yml -f kafka.yml up
+docker-compose -f common.yml -f zookeeper.yml -f kafka_cluster.yml up
 ```
-This will bring up the Kafka cluster, ready to send and receive messages.
 
-### 5. Create Kafka Topics
-After Kafka is running, you need to create the necessary Kafka topics. This is done using the `init_kafka.yml` configuration file. Run the following command:
+### 3. Initialize Kafka Topics
 
 ```bash
-/infrastructure/docker-compose/ docker compose -f common.yml -f init_kafka.yml up
+docker-compose -f common.yml -f init_kafka.yml up
 ```
-This will create the topics required by both the order and warehouse services.
 
-### 6. Run Order and Warehouse Services
-Finally, run the warehouse and order services. Ensure both services are up and communicating via Kafka to handle the event-driven workflows.
+### 4. Start Services Locally
+- Ensure each service is configured with appropriate `application.yml` settings for database, Kafka, and other dependencies.
+- Start each service using your preferred IDE or build tool.
 
+---
 
-## Exammple usage
-Here’s an example of how to interact with the warehouse-service using a curl request to add a new warehouse.
+## Deploying on Kubernetes
 
+### 1. Set Up Kafka on Kubernetes
+
+Navigate to the `infrastructure/kubernetes` directory:
+
+```bash
+cd ./infrastructure/kubernetes
+```
+
+Install Confluent Kafka Helm charts:
+
+```bash
+helm install my-confluent helm/cp-helm-charts
+```
+
+Deploy Kafka clients:
+
+```bash
+kubectl apply -f kafka-client.yml
+```
+
+### 2. Deploy Services
+
+Apply Kubernetes deployment configurations for each service:
+
+```bash
+kubectl apply -f application-deployment-local.yml
+```
+
+---
+
+## Example Usage
 
 ### Add New Warehouse via API
-Use the following `curl` command to create a new warehouse by sending a POST request to the `warehouse-service`:
+
+Use the following `curl` command to create a new warehouse:
 
 ```bash
 curl --location 'http://localhost:8181/warehouses' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOiI2MTU5ZTJlYy04ZTYyLTQxMmItYTQ3YS0xNWJkNDNjMjg3MDMiLCJyb2xlIjoiU1VQRVJfQURNSU4iLCJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsImlhdCI6MTczMzc2MTYzMywiZXhwIjoxNzM1MjMyODYxfQ.S6vGYakry6moMeShsMmZKyvuBzK3z8U-8NQiloUTVC9YLjbj48F4QYTVEcmpFxh0qFgpiuuIJaWuUENBIrNpaw' \
+--header 'Authorization: Bearer <YOUR_JWT_TOKEN>' \
 --data '{
   "name": "New Warehouse",
   "warehouseAddress": {
@@ -73,5 +201,55 @@ curl --location 'http://localhost:8181/warehouses' \
   }
 }'
 ```
-that will create a new warehouse in `warehouse service` and send a message to the Kafka topic. And then the order-service will consume the message and create a new warehouse in the `order service` database.
 
+This request will:
+- Create a new warehouse in the Warehouse Service.
+- Send a message to the Kafka topic.
+- Trigger the Order Service to consume the message and update its database.
+
+---
+
+## Key Commands
+
+- **Start Kafka and Zookeeper**:
+  ```bash
+  docker-compose -f common.yml -f zookeeper.yml -f kafka_cluster.yml up
+  ```
+
+- **Initialize Kafka Topics**:
+  ```bash
+  docker-compose -f common.yml -f init_kafka.yml up
+  ```
+
+- **Deploy on Kubernetes**:
+  ```bash
+  helm install my-confluent helm/cp-helm-charts
+  kubectl apply -f kafka-client.yml
+  kubectl apply -f application-deployment-local.yml
+  ```
+
+---
+
+## Postman Collection
+
+A Postman collection is available in the `documentation` directory to test the API endpoints of all services. Import the collection into Postman to interact with the APIs.
+
+Path to the Postman collection:
+
+```bash
+./documentation/postman_collection.json
+```
+
+---
+
+## Additional Notes
+
+1. Ensure the Kafka topics and service configurations match your application setup.
+2. Monitor logs for debugging using:
+
+   ```bash
+   kubectl logs -f <POD_NAME>
+   ```
+3. For scaling, configure Kafka partitions and service replicas based on load.
+
+---
