@@ -9,4 +9,6 @@ public interface WarehouseRepository {
     Optional<Warehouse> findById(WarehouseId warehouseId);
 
     void save(Warehouse warehouse);
+
+    Optional<Warehouse> findNearestLocation(double latitude, double longitude);
 }

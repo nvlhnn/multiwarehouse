@@ -1,6 +1,12 @@
 server:
   port: 8183
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
 logging:
   level:
     com.nvlhnn: DEBUG

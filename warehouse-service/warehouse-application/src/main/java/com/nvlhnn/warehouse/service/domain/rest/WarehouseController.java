@@ -1,7 +1,9 @@
 package com.nvlhnn.warehouse.service.domain.rest;
 
 import com.nvlhnn.warehouse.service.domain.dto.create.*;
+import com.nvlhnn.warehouse.service.domain.dto.response.WarehouseProductStockResponse;
 import com.nvlhnn.warehouse.service.domain.ports.input.service.WarehouseApplicationService;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +14,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/warehouses", produces = "application/vnd.api.v1+json")
+    @RequestMapping(value = "/warehouses", produces = "application/vnd.api.v1+json")
 public class WarehouseController {
 
     private final WarehouseApplicationService warehouseApplicationService;
@@ -30,6 +32,13 @@ public class WarehouseController {
         return ResponseEntity.ok(createWarehouseResponse);
     }
 
+    @GetMapping
+    public ResponseEntity<WarehouseListResponse> listWarehouses(@RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "10") int size) {
+        WarehouseListResponse response = warehouseApplicationService.listWarehouses(page, size);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/stocks")
     public ResponseEntity<CreateStockResponse> createStock(@RequestBody @Valid CreateStockCommand createStockCommand) {
         CreateStockResponse createStockResponse = warehouseApplicationService.createStock(createStockCommand);
@@ -42,6 +51,13 @@ public class WarehouseController {
         CreateStockResponse updateStockResponse = warehouseApplicationService.updateStock(updateStockCommand);
         log.info("Stock applied with ID: {}", updateStockResponse.getStockId());
         return ResponseEntity.ok(updateStockResponse);
+    }
+
+    @GetMapping("/stocks")
+    public ResponseEntity<WarehouseProductStockResponse> getStock(
+            @RequestParam(name = "warehouseId") String warehouseId, @RequestParam(name = "productId") String productId) {
+        WarehouseProductStockResponse response = warehouseApplicationService.getProductStockByWarehouse(UUID.fromString(warehouseId), UUID.fromString(productId));
+        return ResponseEntity.ok(response);
     }
 
 //

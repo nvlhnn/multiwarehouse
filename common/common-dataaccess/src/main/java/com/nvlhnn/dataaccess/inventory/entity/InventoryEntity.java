@@ -1,6 +1,7 @@
 package com.nvlhnn.dataaccess.inventory.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -15,17 +16,19 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(InventoryEntityId.class)
-@Table(name = "warehouse_product", schema = "warehouse")
 @Entity
+@Immutable  // Mark the entity as immutable, indicating it's a read-only view
+@Table(name = "\"warehouse_product_m_view\"", schema = "\"order\"") // Double quotes to respect case-sensitive table/view names in PostgreSQL
 public class InventoryEntity {
 
     @Id
     private UUID warehouseId;
+
     @Id
     private UUID productId;
+
     private String warehouseName;
     private String productName;
-    private String warehouseAddress;
     private Double warehouseLatitude;
     private Double warehouseLongitude;
     private Integer stock;

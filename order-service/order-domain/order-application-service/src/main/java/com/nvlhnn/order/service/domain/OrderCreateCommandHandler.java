@@ -7,6 +7,10 @@ import com.nvlhnn.order.service.domain.mapper.OrderDataMapper;
 import com.nvlhnn.order.service.domain.ports.output.message.publisher.OrderCreatedPaymentRequestMessagePublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+import java.net.http.HttpRequest;
+
 @Slf4j
 @Component
 public class OrderCreateCommandHandler {

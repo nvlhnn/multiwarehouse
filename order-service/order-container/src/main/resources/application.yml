@@ -9,6 +9,10 @@ order-service:
   order-response-topic-name: order-response
   user-registered-topic-name: user-registered
   product-created-topic-name:  product-created
+  warehouse-created-topic-name:  warehouse-created
+  stock-created-topic-name:  stock-created
+  stock-updated-topic-name:  stock-updated
+  payment-response-topic-name: payment-response
 
 spring:
   jpa:
@@ -18,6 +22,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL9Dialect
+        default_schema: "\"order\""
     hibernate:
       ddl-auto: update
   datasource:
@@ -25,12 +30,12 @@ spring:
     username: postgres
     password: 11111111
     driver-class-name: org.postgresql.Driver
-    schema: classpath:init-schema.sql
+#    schema: classpath:init-schema.sql
   sql:
     init:
       platform: postgres
       mode: always
-      schema-locations: classpath:init-schema.sql
+#      schema-locations: classpath:init-schema.sql
 
 kafka-config:
   bootstrap-servers: localhost:19092,localhost:29092,localhost:39092
@@ -53,9 +58,11 @@ kafka-producer-config:
 kafka-consumer-config:
   key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
   value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-  order-response-consumer-group-id: order-topic-consumer
-  user-service-consumer-group-id: user-topic-consumer
-  product-service-consumer-group-id: product-topic-consumer
+  order-service-product-saved-consumer-group-id: order-service-product-saved-consumer-group
+  order-service-warehouse-stock-created-group-id: order-service-warehouse-stock-created-group
+  order-service-warehouse-stock-updated-group-id: order-service-warehouse-stock-updated-group
+  order-service-user-saved-consumer-group-id: order-service-user-saved-consumer-group
+  order-service-warehouse-saved-consumer-group-id: order-service-warehouse-saved-consumer-group
   auto-offset-reset: earliest
   specific-avro-reader-key: specific.avro.reader
   specific-avro-reader: true

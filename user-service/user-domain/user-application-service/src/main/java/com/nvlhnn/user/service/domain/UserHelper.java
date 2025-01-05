@@ -2,7 +2,6 @@ package com.nvlhnn.user.service.domain;
 
 import com.nvlhnn.user.service.domain.dto.post.LoginCommand;
 import com.nvlhnn.user.service.domain.dto.post.RegisterCommand;
-import com.nvlhnn.user.service.domain.dto.response.UserResponse;
 import com.nvlhnn.user.service.domain.entity.User;
 import com.nvlhnn.user.service.domain.event.UserCreatedEvent;
 import com.nvlhnn.user.service.domain.exception.UserDomainException;
@@ -41,7 +40,7 @@ public class UserHelper {
             throw new UserDomainException("User already exists.");
         }
 
-        UserCreatedEvent userCreatedEvent = userDomainService.createUser(user, userCreatedEventPublisher); // Event publishing can be added later
+        UserCreatedEvent userCreatedEvent = userDomainService.initializeUser(user, userCreatedEventPublisher); // Event publishing can be added later
         saveUser(user);
         log.info("User with email: {} has been successfully registered", user.getEmail());
         return userCreatedEvent;

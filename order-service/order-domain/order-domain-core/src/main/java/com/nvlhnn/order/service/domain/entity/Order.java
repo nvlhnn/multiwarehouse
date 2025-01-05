@@ -6,20 +6,28 @@ import com.nvlhnn.order.service.domain.exception.OrderDomainException;
 import com.nvlhnn.order.service.domain.valueobject.OrderItemId;
 import com.nvlhnn.order.service.domain.valueobject.StreetAddress;
 import com.nvlhnn.order.service.domain.valueobject.TrackingId;
+import lombok.extern.slf4j.Slf4j;
 
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+@Slf4j
 public class Order extends AggregateRoot<OrderId> {
-    private final CustomerId customerId;
-    private final WarehouseId warehouseId;
+    private final UserId userId;
     private final StreetAddress deliveryAddress;
     private final Money price;
     private final List<OrderItem> items;
 
+    private final Warehouse warehouse;
 
     private TrackingId trackingId;
     private OrderStatus orderStatus;
+
+    private Date expiredAt;
     private List<String> failureMessages;
 
     public static final String FAILURE_MESSAGE_DELIMITER = ",";
@@ -28,6 +36,7 @@ public class Order extends AggregateRoot<OrderId> {
         setId(new OrderId(UUID.randomUUID()));
         trackingId = new TrackingId(UUID.randomUUID());
         orderStatus = OrderStatus.PENDING;
+        expiredAt = Date.from(ZonedDateTime.now().plusDays(1).toInstant());
         initializeOrderItems();
     }
 
@@ -67,6 +76,24 @@ public class Order extends AggregateRoot<OrderId> {
         updateFailureMessages(failureMessages);
     }
 
+    public void payOrder() {
+        orderStatus = OrderStatus.PAID;
+    }
+
+    public void validatePayOrder(){
+        if (orderStatus != OrderStatus.PENDING) {
+            throw new OrderDomainException("Order is not in correct state for pay operation!");
+        }
+
+        if (expiredAt != null && expiredAt.before(new Date())) {
+            throw new OrderDomainException("Order is expired!");
+        }
+    }
+
+    public void cancelOrder() {
+        orderStatus = OrderStatus.CANCELLED;
+    }
+
     private void updateFailureMessages(List<String> failureMessages) {
         if (this.failureMessages != null && failureMessages != null) {
             this.failureMessages.addAll(failureMessages.stream().filter(message -> !message.isEmpty()).toList());
@@ -94,10 +121,10 @@ public class Order extends AggregateRoot<OrderId> {
             return orderItem.getSubTotal();
         }).reduce(Money.ZERO, Money::add);
 
-        if (!price.equals(orderItemsTotal)) {
-            throw new OrderDomainException("Total price: " + price.getAmount()
-                    + " is not equal to Order items total: " + orderItemsTotal.getAmount() + "!");
-        }
+//        if (!price.equals(orderItemsTotal)) {
+//            throw new OrderDomainException("Total price: " + price.getAmount()
+//                    + " is not equal to Order items total: " + orderItemsTotal.getAmount() + "!");
+//        }
     }
 
     private void validateItemPrice(OrderItem orderItem) {
@@ -105,6 +132,78 @@ public class Order extends AggregateRoot<OrderId> {
 //            throw new OrderDomainException("Order item price: " + orderItem.getPrice().getAmount() +
 //                    " is not valid for product " + orderItem.getProduct().getId().getValue());
 //        }
+    }
+
+
+    public void validateOrderItems(List<Stock> stocks) {
+
+        for (OrderItem orderItem: items) {
+            // count total total stock with product id in orderItem
+            int totalStock = stocks.stream()
+                    .filter(stock -> stock.getProductId().equals(orderItem.getProduct().getId()))
+                    .mapToInt(Stock::getQuantity)
+                    .sum();
+            if (orderItem.getQuantity() > totalStock) {
+                throw new OrderDomainException("Order item quantity: " + orderItem.getQuantity() +
+                        " is greater than total stock: " + totalStock + " for product " + orderItem.getProduct().getId().getValue());
+            }
+
+        }
+    }
+
+    public List<Stock> findAndTransferStock(WarehouseId nearestWarehouseId, List<Stock> stocks, ProductId productId, int requiredQuantity) {
+        // List to store all stock objects that are reduced
+        List<Stock> stockChanges = new java.util.ArrayList<>();
+
+        // First, check the stock in the nearest warehouse
+        Stock nearestWarehouseStock = findStockInWarehouse(nearestWarehouseId, productId, stocks);
+        int stockInNearestWarehouse = nearestWarehouseStock != null ? nearestWarehouseStock.getQuantity() : 0;
+
+        // If the nearest warehouse has enough stock, no need for transfer from others
+        if (stockInNearestWarehouse >= requiredQuantity) {
+            nearestWarehouseStock.updateQuantity(nearestWarehouseStock.getQuantity() - requiredQuantity);
+            stockChanges.add(new Stock(nearestWarehouseStock.getId(), nearestWarehouseId, productId, -requiredQuantity));  // Add the reduced stock to list
+            return stockChanges;
+        }
+
+        // If not enough stock in nearest warehouse, calculate remaining stock needed
+        int remainingStockNeeded = requiredQuantity - stockInNearestWarehouse;
+
+        // Add the reduced stock from nearest warehouse to stockChanges
+        if (stockInNearestWarehouse > 0) {
+            nearestWarehouseStock.updateQuantity(0); // Reducing all stock in nearest warehouse
+            stockChanges.add(new Stock(nearestWarehouseStock.getId(), nearestWarehouseId, productId, -stockInNearestWarehouse));
+        }
+
+        // Gather available stocks from other warehouses (exclude the nearest warehouse)
+        List<Stock> stocksToReduce = stocks.stream()
+                .filter(stock -> stock.getProductId().equals(productId))  // Filter by product
+                .filter(stock -> !stock.getWarehouseId().equals(nearestWarehouseId))  // Exclude nearest warehouse
+                .filter(stock -> stock.getQuantity() > 0)  // Only consider warehouses with stock available
+                .sorted((stock1, stock2) -> Integer.compare(stock2.getQuantity(), stock1.getQuantity()))  // Sort by available quantity (descending)
+                .collect(Collectors.toList());
+
+        // Loop through other warehouses to reduce stock until the remaining need is fulfilled
+        for (Stock stock : stocksToReduce) {
+            if (remainingStockNeeded <= 0) break; // Stop if no more stock is needed
+
+            // Calculate how much stock can be taken from this warehouse
+            int stockToReduce = Math.min(stock.getQuantity(), remainingStockNeeded);
+            remainingStockNeeded -= stockToReduce;
+
+            // Reduce the stock in this warehouse
+            stock.updateQuantity(stock.getQuantity() - stockToReduce);
+            stockChanges.add(new Stock(stock.getId(), stock.getWarehouseId(), productId, -stockToReduce));  // Add the reduced stock to the list
+        }
+
+        return stockChanges;  // Return the list of stock changes (with negative quantities)
+    }
+
+    private Stock findStockInWarehouse(WarehouseId warehouseId, ProductId productId, List<Stock> stocks) {
+        return stocks.stream()
+                .filter(stock -> stock.getWarehouseId().equals(warehouseId) && stock.getProductId().equals(productId))
+                .findFirst()
+                .orElse(null);
     }
 
     private void initializeOrderItems() {
@@ -116,26 +215,28 @@ public class Order extends AggregateRoot<OrderId> {
 
     private Order(Builder builder) {
         super.setId(builder.orderId);
-        customerId = builder.customerId;
-        warehouseId = builder.warehouseId;
+        userId = builder.userId;
+        warehouse = builder.warehouse;
         deliveryAddress = builder.deliveryAddress;
         price = builder.price;
         items = builder.items;
         trackingId = builder.trackingId;
         orderStatus = builder.orderStatus;
         failureMessages = builder.failureMessages;
+        expiredAt = builder.expiredAt;
+
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
-    public CustomerId getCustomerId() {
-        return customerId;
+    public UserId getUserId() {
+        return userId;
     }
 
-    public WarehouseId getWarehouseId() {
-        return warehouseId;
+    public Warehouse getWarehouse() {
+        return warehouse;
     }
 
     public StreetAddress getDeliveryAddress() {
@@ -162,16 +263,21 @@ public class Order extends AggregateRoot<OrderId> {
         return failureMessages;
     }
 
+    public Date getExpiredAt() {
+        return expiredAt;
+    }
+
     public static final class Builder {
         private OrderId orderId;
-        private CustomerId customerId;
-        private WarehouseId warehouseId;
+        private UserId userId;
+        private Warehouse warehouse;
         private StreetAddress deliveryAddress;
         private Money price;
         private List<OrderItem> items;
         private TrackingId trackingId;
         private OrderStatus orderStatus;
         private List<String> failureMessages;
+        private Date expiredAt;
 
         private Builder() {
         }
@@ -181,13 +287,13 @@ public class Order extends AggregateRoot<OrderId> {
             return this;
         }
 
-        public Builder customerId(CustomerId val) {
-            customerId = val;
+        public Builder userId(UserId val) {
+            userId = val;
             return this;
         }
 
-        public Builder warehouseId(WarehouseId val) {
-            warehouseId = val;
+        public Builder warehouse(Warehouse val) {
+            warehouse = val;
             return this;
         }
 
@@ -218,6 +324,11 @@ public class Order extends AggregateRoot<OrderId> {
 
         public Builder failureMessages(List<String> val) {
             failureMessages = val;
+            return this;
+        }
+
+        public Builder expiredAt(Date val) {
+            expiredAt = val;
             return this;
         }
 

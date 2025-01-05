@@ -1,0 +1,45 @@
+{
+    "namespace": "com.nvlhnn.payment.kafka.avro.model",
+    "type": "record",
+    "name": "PaymentResponseAvroModel",
+    "fields": [
+        {
+            "name": "id",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "name": "sagaId",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "name": "orderId",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "name": "createdAt",
+            "type": {
+                "type": "long",
+                "logicalType": "timestamp-millis"
+            }
+        },
+        {
+            "name": "orderStatus",
+            "type": {
+                "type": "enum",
+                "name": "OrderStatus",
+                "symbols": [
+                    "PENDING", "PAID", "APPROVED", "CANCELLING", "CANCELLED"
+                ]
+            }
+        }
+    ]
+}

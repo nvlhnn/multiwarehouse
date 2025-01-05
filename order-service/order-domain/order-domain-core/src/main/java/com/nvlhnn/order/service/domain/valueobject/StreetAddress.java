@@ -8,12 +8,16 @@ public class StreetAddress {
     private final String street;
     private final String postalCode;
     private final String city;
+    private final Double latitude;
+    private final Double longitude;
 
-    public StreetAddress(UUID id, String street, String postalCode, String city) {
+    public StreetAddress(UUID id, String street, String postalCode, String city, Double latitude, Double longitude) {
         this.id = id;
         this.street = street;
         this.postalCode = postalCode;
         this.city = city;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public UUID getId() {
@@ -31,6 +35,15 @@ public class StreetAddress {
     public String getCity() {
         return city;
     }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
 
     @Override
     public boolean equals(Object o) {

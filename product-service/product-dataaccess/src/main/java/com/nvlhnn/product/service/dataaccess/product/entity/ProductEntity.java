@@ -1,11 +1,12 @@
 package com.nvlhnn.product.service.dataaccess.product.entity;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -21,8 +22,20 @@ public class ProductEntity {
     private UUID id;
     private String name;
     private BigDecimal price;
+    private String imageUrl;
 
     private Integer totalStock;
+
+    @Column(name = "created_at", nullable = true, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
+    private Date createdAt;
+
+    @Column(name = "updated_at", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    private Date updatedAt;
+
 
     @Override
     public boolean equals(Object o) {

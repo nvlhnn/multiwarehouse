@@ -36,7 +36,7 @@ public class WarehouseUpdateHelper {
     @Transactional
     public WarehouseUpdatedEvent processWarehouseUpdate(CreateUpdateWarehouseCommand updateWarehouseCommand) {
         Warehouse warehouse = getWarehouseById(updateWarehouseCommand.getWarehouseId());
-        WarehouseUpdatedEvent warehouseUpdatedEvent = warehouseDomainService.updateWarehouse(
+        WarehouseUpdatedEvent warehouseUpdatedEvent = warehouseDomainService.validateAndPatchWarehouse(
                 warehouse,
                 updateWarehouseCommand.getName(),
                 warehouseDataMapper.warehouseAddressToStreetAddress(updateWarehouseCommand.getWarehouseAddress()),

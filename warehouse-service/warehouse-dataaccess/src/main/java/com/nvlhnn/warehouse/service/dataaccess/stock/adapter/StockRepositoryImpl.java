@@ -59,4 +59,15 @@ public class StockRepositoryImpl implements StockRepository {
     public void delete(Stock stock) {
         stockJpaRepository.delete(stockDataAccessMapper.stockToStockEntityDataMapper(stock));
     }
+
+    @Override
+    public Optional<List<Stock>> findByProductIdIn(List<ProductId> productIds) {
+        return stockJpaRepository.findByProductIdIn(productIds.stream().map(ProductId::getValue).collect(Collectors.toList()))
+                .map(stocks -> stocks.stream().map(stockDataAccessMapper::stockEntityToStock).collect(Collectors.toList()));
+    }
+
+    @Override
+    public Integer getProductTotalQuantity(ProductId productId) {
+        return stockJpaRepository.getProductTotalQuantity(productId.getValue());
+    }
 }

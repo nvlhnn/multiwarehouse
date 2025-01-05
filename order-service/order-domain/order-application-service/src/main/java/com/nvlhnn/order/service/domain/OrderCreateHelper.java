@@ -1,5 +1,7 @@
 package com.nvlhnn.order.service.domain;
 
+import com.nvlhnn.domain.valueobject.ProductId;
+import com.nvlhnn.domain.valueobject.UserId;
 import com.nvlhnn.domain.valueobject.WarehouseId;
 import com.nvlhnn.order.service.domain.dto.create.CreateOrderCommand;
 import com.nvlhnn.order.service.domain.entity.*;
@@ -7,13 +9,16 @@ import com.nvlhnn.order.service.domain.event.*;
 import com.nvlhnn.order.service.domain.exception.*;
 import com.nvlhnn.order.service.domain.mapper.OrderDataMapper;
 import com.nvlhnn.order.service.domain.ports.output.message.publisher.OrderCreatedPaymentRequestMessagePublisher;
-import com.nvlhnn.order.service.domain.ports.output.repository.CustomerRepository;
+import com.nvlhnn.order.service.domain.ports.output.repository.StockRepository;
+import com.nvlhnn.order.service.domain.ports.output.repository.UserRepository;
 import com.nvlhnn.order.service.domain.ports.output.repository.OrderRepository;
 import com.nvlhnn.order.service.domain.ports.output.repository.WarehouseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,7 +29,9 @@ public class OrderCreateHelper {
 
     private final OrderRepository orderRepository;
 
-    private final CustomerRepository customerRepository;
+    private final StockRepository stockRepository;
+
+    private final UserRepository userRepository;
 
     private final WarehouseRepository warehouseRepository;
 
@@ -33,14 +40,16 @@ public class OrderCreateHelper {
     private final OrderCreatedPaymentRequestMessagePublisher orderCreatedEventDomainEventPublisher;
 
     public OrderCreateHelper(OrderDomainService orderDomainService,
+                             StockRepository stockRepository,
                              OrderRepository orderRepository,
-                             CustomerRepository customerRepository,
+                             UserRepository userRepository,
                              WarehouseRepository warehouseRepository,
                              OrderDataMapper orderDataMapper,
                              OrderCreatedPaymentRequestMessagePublisher orderCreatedEventDomainEventPublisher) {
         this.orderDomainService = orderDomainService;
         this.orderRepository = orderRepository;
-        this.customerRepository = customerRepository;
+        this.stockRepository = stockRepository;
+        this.userRepository = userRepository;
         this.warehouseRepository = warehouseRepository;
         this.orderDataMapper = orderDataMapper;
         this.orderCreatedEventDomainEventPublisher = orderCreatedEventDomainEventPublisher;
@@ -48,33 +57,51 @@ public class OrderCreateHelper {
 
     @Transactional
     public OrderCreatedEvent persistOrder(CreateOrderCommand createOrderCommand) {
-        checkCustomer(createOrderCommand.getCustomerId());
-        Warehouse warehouse = checkWarehouse(createOrderCommand);
-        Order order = orderDataMapper.createOrderCommandToOrder(createOrderCommand);
-        OrderCreatedEvent orderCreatedEvent = orderDomainService.validateAndInitiateOrder(order, warehouse,
+
+        // check user
+        Optional<User> optionalUser = userRepository.findById(new UserId(createOrderCommand.getUserId()));
+        if (optionalUser.isEmpty()) {
+            log.warn("Could not find user with user id: {}", createOrderCommand.getUserId().toString());
+            throw new OrderDomainException("Could not find user with user id: " + createOrderCommand.getUserId().toString());
+        }
+
+        // get nearest warehouse
+        Optional<Warehouse> nearestWarehouse = warehouseRepository.findNearestLocation(createOrderCommand.getAddress().getLatitude(), createOrderCommand.getAddress().getLongitude());
+        if (nearestWarehouse.isEmpty()) {
+            log.warn("Could not find nearest warehouse!");
+            throw new OrderDomainException("Could not find nearest warehouse!");
+        }
+
+        List<ProductId> productIds = createOrderCommand.getItems().stream().map(orderItem -> new ProductId(orderItem.getProductId())).toList();
+        Optional<List<Stock>> stocks = stockRepository.findByProductIdIn(productIds);
+        if (stocks.isEmpty()) {
+            log.warn("Could not find stocks for products: {}", productIds);
+            throw new OrderDomainException("Could not find stocks for products: " + productIds);
+        }
+
+        Order order = orderDataMapper.createOrderCommandToOrder(createOrderCommand, nearestWarehouse.get(), optionalUser.get());
+        OrderCreatedEvent orderCreatedEvent = orderDomainService.validateAndInitiateOrder(order, stocks.get(), nearestWarehouse.get(),
                 orderCreatedEventDomainEventPublisher);
         saveOrder(order);
         log.info("Order is created with id: {}", orderCreatedEvent.getOrder().getId().getValue());
         return orderCreatedEvent;
     }
 
-    private Warehouse checkWarehouse(CreateOrderCommand createOrderCommand) {
-        Optional<Warehouse> optionalWarehouse = warehouseRepository.findById(new WarehouseId(createOrderCommand.getWarehouseId()));
-        if (optionalWarehouse.isEmpty()) {
-            log.warn("Could not find warehouse with warehouse id: {}", createOrderCommand.getWarehouseId());
-            throw new OrderDomainException("Could not find warehouse with warehouse id: " +
-                    createOrderCommand.getWarehouseId());
-        }
-        return optionalWarehouse.get();
-    }
+//    private Warehouse checkWarehouse(CreateOrderCommand createOrderCommand) {
+//        Optional<Warehouse> optionalWarehouse = warehouseRepository.findById(new WarehouseId(createOrderCommand.getWarehouseId()));
+//        if (optionalWarehouse.isEmpty()) {
+//            log.warn("Could not find warehouse with warehouse id: {}", createOrderCommand.getWarehouseId());
+//            throw new OrderDomainException("Could not find warehouse with warehouse id: " +
+//                    createOrderCommand.getWarehouseId());
+//        }
+//        return optionalWarehouse.get();
+//    }
 
-    private void checkCustomer(UUID customerId) {
-        Optional<Customer> customer = customerRepository.findCustomer(customerId);
-        if (customer.isEmpty()) {
-            log.warn("Could not find customer with customer id: {}", customerId.toString());
-            throw new OrderDomainException("Could not find customer with customer id: " + customerId);
-        }
-    }
+//    private boolean isStockAvailable(ProductId productId, int quantity) {
+//
+//        Integer quantity = stockRepository.checkTotalProductStock(productId);
+//
+//    }
 
     private Order saveOrder(Order order) {
         Order orderResult = orderRepository.save(order);

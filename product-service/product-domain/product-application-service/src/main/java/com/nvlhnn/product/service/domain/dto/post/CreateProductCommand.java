@@ -17,4 +17,7 @@ public class CreateProductCommand {
 
     @NotNull
     private final BigDecimal price;
+
+    @NotNull
+    private final String imageUrl;
 }

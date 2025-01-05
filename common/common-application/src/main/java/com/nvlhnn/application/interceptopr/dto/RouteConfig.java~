@@ -1,0 +1,4 @@
+package com.nvlhnn.application.interceptopr.dto;
+
+public class RouteConfig {
+}

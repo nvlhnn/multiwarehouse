@@ -24,6 +24,9 @@ public class WarehouseDataAccessMapper {
         return Warehouse.builder()
                 .warehouseId(new WarehouseId(warehouseEntity.getId()))
                 .name(warehouseEntity.getName())
+                .city(warehouseEntity.getCity())
+                .latitude(warehouseEntity.getLatitude())
+                .longitude(warehouseEntity.getLongitude())
                 .active(warehouseEntity.getIsActive())
                 .build();
     }
@@ -32,6 +35,9 @@ public class WarehouseDataAccessMapper {
         return WarehouseEntity.builder()
                 .id(warehouse.getId().getValue())
                 .name(warehouse.getName())
+                .city(warehouse.getCity())
+                .latitude(warehouse.getLatitude())
+                .longitude(warehouse.getLongitude())
                 .isActive(warehouse.isActive())
                 .build();
     }

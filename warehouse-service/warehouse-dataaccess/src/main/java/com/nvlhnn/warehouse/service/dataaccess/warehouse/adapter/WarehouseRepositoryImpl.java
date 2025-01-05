@@ -6,6 +6,8 @@ import com.nvlhnn.warehouse.service.dataaccess.warehouse.mapper.WarehouseDataAcc
 import com.nvlhnn.warehouse.service.dataaccess.warehouse.repository.WarehouseJpaRepository;
 import com.nvlhnn.warehouse.service.domain.entity.Warehouse;
 import com.nvlhnn.warehouse.service.domain.ports.output.repository.WarehouseRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -37,12 +39,10 @@ public class WarehouseRepositoryImpl implements WarehouseRepository {
         return warehouseJpaRepository.findById(warehouseId.getValue()).map(warehouseDataAccessMapper::warehouseEntityToWarehouse);
     }
 
-
     @Override
-    public List<Warehouse> findAll(){
-        return warehouseJpaRepository.findAll().stream()
-                .map(warehouseDataAccessMapper::warehouseEntityToWarehouse)
-                .collect(Collectors.toList());
+    public Page<Warehouse> findAll(Pageable pageable) {
+        return warehouseJpaRepository.findAll(pageable)
+                .map(warehouseDataAccessMapper::warehouseEntityToWarehouse);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.nvlhnn.order.service.dataaccess.warehouse.entity;
 
+import com.nvlhnn.order.service.dataaccess.order.entity.OrderEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,6 +19,9 @@ public class WarehouseEntity {
     private UUID id;
     private String name;
     private Boolean isActive;
+    private String city;
+    private Double latitude;
+    private Double longitude;
 
     @Override
     public boolean equals(Object o) {

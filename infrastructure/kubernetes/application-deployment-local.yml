@@ -2,6 +2,110 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: user-deployment
+  namespace: default
+  labels:
+    app: user-deployment
+spec:
+  selector:
+    matchLabels:
+      app: user-deployment
+  template:
+    metadata:
+      labels:
+        app: user-deployment
+    spec:
+      containers:
+        - name: user-service
+          image: com.nvlhnn/user.service:1.0-SNAPSHOT
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://host.docker.internal:5432/multiwarehouse?currentSchema=user&binaryTransfer=true&reWriteBatchedInserts=true&stringtype=unspecified"
+            - name: KAFKA-CONFIG_BOOTSTRAP-SERVERS
+              value: "my-confluent-cp-kafka-headless:9092"
+            - name: KAFKA-CONFIG_SCHEMA-REGISTRY-URL
+              value: "http://my-confluent-cp-schema-registry:8081"
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1024Mi"
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: default
+  labels:
+    app: user-service
+spec:
+  selector:
+    app: user-deployment
+  ports:
+    - name: user-service-port
+      protocol: TCP
+      port: 8183
+  type: LoadBalancer
+  loadBalancerIP: ""
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-deployment
+  namespace: default
+  labels:
+    app: product-deployment
+spec:
+  selector:
+    matchLabels:
+      app: product-deployment
+  template:
+    metadata:
+      labels:
+        app: product-deployment
+    spec:
+      containers:
+        - name: product-service
+          image: com.nvlhnn/product.service:1.0-SNAPSHOT
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://host.docker.internal:5432/multiwarehouse?currentSchema=product&binaryTransfer=true&reWriteBatchedInserts=true&stringtype=unspecified"
+            - name: KAFKA-CONFIG_BOOTSTRAP-SERVERS
+              value: "my-confluent-cp-kafka-headless:9092"
+            - name: KAFKA-CONFIG_SCHEMA-REGISTRY-URL
+              value: "http://my-confluent-cp-schema-registry:8081"
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1024Mi"
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+  namespace: default
+  labels:
+    app: product-service
+spec:
+  selector:
+    app: product-deployment
+  ports:
+    - name: product-service-port
+      protocol: TCP
+      port: 8185
+  type: LoadBalancer
+  loadBalancerIP: ""
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: warehouse-deployment
   namespace: default
   labels:
@@ -80,10 +184,11 @@ spec:
           resources:
             limits:
               cpu: "500m"
-              memory: "1024Mi"
+              memory: "2048Mi"  # Increased memory limit
             requests:
               cpu: "200m"
-              memory: "256Mi"
+              memory: "1024Mi"  # Increased memory request
+
 ---
 apiVersion: v1
 kind: Service
@@ -101,3 +206,32 @@ spec:
       port: 8182
   type: LoadBalancer
   loadBalancerIP: ""
+
+#---
+#apiVersion: autoscaling/v2
+#kind: HorizontalPodAutoscaler
+#metadata:
+#  name: order-deployment-hpa
+#  namespace: default
+#  labels:
+#    app: order-deployment
+#spec:
+#  scaleTargetRef:
+#    kind: Deployment
+#    name: order-deployment
+#    apiVersion: apps/v1
+#  minReplicas: 2
+#  maxReplicas: 6
+#  metrics:
+#    - type: Resource
+#      resource:
+#        name: cpu
+#        target:
+#          type: Utilization
+#          averageUtilization: 70
+#    - type: Resource
+#      resource:
+#        name: memory
+#        target:
+#          type: Utilization
+#          averageUtilization: 70

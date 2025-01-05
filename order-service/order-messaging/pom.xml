@@ -15,6 +15,16 @@
     <dependencies>
         <dependency>
             <groupId>com.nvlhnn</groupId>
+            <artifactId>websocket-config-data</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nvlhnn</groupId>
+            <artifactId>websocket-publisher</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nvlhnn</groupId>
             <artifactId>order-application-service</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

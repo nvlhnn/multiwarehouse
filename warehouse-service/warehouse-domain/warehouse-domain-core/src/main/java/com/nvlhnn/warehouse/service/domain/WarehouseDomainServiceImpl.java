@@ -1,12 +1,8 @@
 package com.nvlhnn.warehouse.service.domain;
 
 import com.nvlhnn.domain.event.publisher.DomainEventPublisher;
-import com.nvlhnn.domain.valueobject.ProductId;
-import com.nvlhnn.domain.valueobject.WarehouseId;
-import com.nvlhnn.warehouse.service.domain.entity.Product;
-import com.nvlhnn.warehouse.service.domain.entity.Stock;
-import com.nvlhnn.warehouse.service.domain.entity.User;
-import com.nvlhnn.warehouse.service.domain.entity.Warehouse;
+import com.nvlhnn.domain.valueobject.*;
+import com.nvlhnn.warehouse.service.domain.entity.*;
 import com.nvlhnn.warehouse.service.domain.event.*;
 import com.nvlhnn.warehouse.service.domain.exception.WarehouseDomainException;
 import com.nvlhnn.warehouse.service.domain.valueobject.StatusStockMutation;
@@ -16,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 public class WarehouseDomainServiceImpl implements WarehouseDomainService{
@@ -23,8 +20,8 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService{
     private static final String UTC = "UTC";
 
     @Override
-    public WarehouseCreatedEvent createWarehouse(Warehouse warehouse,
-                                                 DomainEventPublisher<WarehouseCreatedEvent> publisher) {
+    public WarehouseCreatedEvent validateAndInitializeWarehouse(Warehouse warehouse,
+                                                                DomainEventPublisher<WarehouseCreatedEvent> publisher) {
         warehouse.validateInitialWarehouse();
         warehouse.initializeWarehouse();
         log.info("Warehouse with id: {} is created", warehouse.getId().getValue());
@@ -32,10 +29,10 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService{
     }
 
     @Override
-    public WarehouseUpdatedEvent updateWarehouse(Warehouse warehouse,
-                                                 String newName,
-                                                 StreetAddress newStreetAddress,
-                                                 DomainEventPublisher<WarehouseUpdatedEvent> publisher) {
+    public WarehouseUpdatedEvent validateAndPatchWarehouse(Warehouse warehouse,
+                                                           String newName,
+                                                           StreetAddress newStreetAddress,
+                                                           DomainEventPublisher<WarehouseUpdatedEvent> publisher) {
         warehouse.validateWarehouse();
         warehouse.updateWarehouse(newName, newStreetAddress);
         log.info("Warehouse with id: {} is updated", warehouse.getId().getValue());
@@ -59,10 +56,10 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService{
 
 
     @Override
-    public StockCreatedEvent createStock(Stock stock,
-                                         Warehouse warehouse,
-                                         Product product,
-                                         DomainEventPublisher<StockCreatedEvent> publisher) {
+    public StockCreatedEvent validateAndInitializeStock(Stock stock,
+                                                        Warehouse warehouse,
+                                                        Product product,
+                                                        DomainEventPublisher<StockCreatedEvent> publisher) {
         stock.validateStock(true);
         stock.initializeStock(new WarehouseId(warehouse.getId().getValue()), new ProductId(product.getId().getValue()));
 
@@ -72,7 +69,7 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService{
     }
 
     @Override
-    public StockUpdatedEvent updateStock(Stock stock,  int quantity, DomainEventPublisher<StockUpdatedEvent> publisher) {
+    public StockUpdatedEvent validateAndPatchStock(Stock stock, int quantity, DomainEventPublisher<StockUpdatedEvent> publisher) {
         stock.validateStock(false);
 
         log.info("reducing stock for product id: {} with quantity: {} from current quantity: {} to new quantity: {}",
@@ -87,8 +84,31 @@ public class WarehouseDomainServiceImpl implements WarehouseDomainService{
     }
 
 
+    @Override
+    public OrderStockMutation validateAndInitiateOrderStockMutation(OrderId orderId, Stock stock, Integer quantity) {
+        log.info("Validating order stock mutation for order id: {} with product id: {} and quantity: {}", orderId.getValue(), stock.getProductId().getValue(), quantity);
+        OrderStockMutation orderStockMutation = OrderStockMutation.builder()
+                .orderStockMutationId(new OrderStockMutationId(UUID.randomUUID()))
+                .orderId(orderId)
+                .warehouseId(stock.getWarehouseId())
+                .productId(stock.getProductId())
+                .quantity(quantity)
+                .statusStockMutation(StatusStockMutation.PENDING)
+                .build();
+        orderStockMutation.validateStock();
+        return orderStockMutation;
+    }
 
+    @Override
+    public void stockMutationPaid(OrderStockMutation orderStockMutation) {
+        orderStockMutation.updateStatusStockMutation(StatusStockMutation.COMPLETED);
+    }
 
+    @Override
+    public void stockMutationCancelled(OrderStockMutation orderStockMutation) {
+        log.info("Stock mutation for order id: {} with product id: {} is cancelled", orderStockMutation.getOrderId().getValue(), orderStockMutation.getProductId().getValue());
+        orderStockMutation.updateStatusStockMutation(StatusStockMutation.CANCELED);
+    }
 
     @Override
     public StockTransferredEvent transferStock(Warehouse fromWarehouse,

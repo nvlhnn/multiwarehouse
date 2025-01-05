@@ -32,7 +32,7 @@ public class UserRegisteredKafkaListener
     }
 
     @Override
-    @KafkaListener(id = "${kafka-consumer-config.user-service-consumer-group-id}",
+    @KafkaListener(id = "${kafka-consumer-config.product-service-user-saved-consumer-group-id}",
             topics = "${product-service.user-registered-topic-name}")
     public void receive(@Payload List<UserResponseAvroModel> messages,
                         @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) List<String> keys,

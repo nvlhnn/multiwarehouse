@@ -58,6 +58,10 @@
             "type": "int"
         },
         {
+            "name": "totalProductStock",
+            "type": "int"
+        },
+        {
             "name": "eventTimestamp",
             "type": {
                 "type": "long",

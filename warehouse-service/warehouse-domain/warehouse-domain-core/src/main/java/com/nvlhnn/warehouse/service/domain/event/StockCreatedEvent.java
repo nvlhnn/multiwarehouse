@@ -13,6 +13,7 @@ public class StockCreatedEvent extends StockEvent{
     private final Double warehouseLatitude;
     private final Double warehouseLongitude;
     private final String productName;
+    private Integer productTotalQuantity;
 
 
     public StockCreatedEvent(Stock stock,
@@ -29,6 +30,13 @@ public class StockCreatedEvent extends StockEvent{
         this.stockCreatedEventDomainEventPublisher = stockCreatedEventDomainEventPublisher;
     }
 
+    public Integer getProductTotalQuantity() {
+        return productTotalQuantity;
+    }
+
+    public void setProductTotalQuantity(Integer productTotalQuantity) {
+        this.productTotalQuantity = productTotalQuantity;
+    }
 
     public String getWarehouseName() {
         return warehouseName;

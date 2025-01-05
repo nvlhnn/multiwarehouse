@@ -7,6 +7,7 @@ import com.nvlhnn.order.service.domain.event.OrderCreatedEvent;
 import com.nvlhnn.order.service.domain.ports.output.message.publisher.OrderCreatedPaymentRequestMessagePublisher;
 import com.nvlhnn.order.service.messaging.mapper.OrderMessagingDataMapper;
 import com.nvlhnn.warehouse.kafka.order.avro.model.OrderResponseAvroModel;
+import com.nvlhnn.websocket.publisher.WebSocketPublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -18,21 +19,25 @@ public class CreateOrderKafkaMessagePublisher implements OrderCreatedPaymentRequ
     private final OrderServiceConfigData orderServiceConfigData;
     private final KafkaProducer<String, OrderResponseAvroModel> kafkaProducer;
     private final KafkaMessageHelper orderKafkaMessageHelper;
+    private final WebSocketPublisher webSocketPublisher;
 
     public CreateOrderKafkaMessagePublisher(OrderMessagingDataMapper orderMessagingDataMapper,
                                             OrderServiceConfigData orderServiceConfigData,
                                             KafkaProducer<String, OrderResponseAvroModel> kafkaProducer,
-                                            KafkaMessageHelper kafkaMessageHelper) {
+                                            KafkaMessageHelper kafkaMessageHelper,
+                                            WebSocketPublisher webSocketPublisher
+                                            ) {
         this.orderMessagingDataMapper = orderMessagingDataMapper;
         this.orderServiceConfigData = orderServiceConfigData;
         this.kafkaProducer = kafkaProducer;
         this.orderKafkaMessageHelper = kafkaMessageHelper;
+        this.webSocketPublisher = webSocketPublisher;
     }
 
     @Override
     public void publish(OrderCreatedEvent domainEvent) {
         String orderId = domainEvent.getOrder().getId().getValue().toString();
-        log.info("Received OrderCreatedEvent for order id: {}", orderId);
+        log.info("publishing OrderCreatedEvent for order id: {}", orderId);
 
         try {
             OrderResponseAvroModel orderAvromodel = orderMessagingDataMapper
@@ -48,6 +53,8 @@ public class CreateOrderKafkaMessagePublisher implements OrderCreatedPaymentRequ
                                     "OrderResponseAvroModel"));
 
             log.info("PaymentRequestAvroModel sent to Kafka for warehouse id: {}", orderAvromodel.getWarehouseId());
+
+            webSocketPublisher.publish("/topic/order-created", "New order created with ID: " + orderId);
         } catch (Exception e) {
             log.error("Error while sending OrderResponseAvroModel message" +
                     " to kafka with order id: {}, error: {}", orderId, e.getMessage());

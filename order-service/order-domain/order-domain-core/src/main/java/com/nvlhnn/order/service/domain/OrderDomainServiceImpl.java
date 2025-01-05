@@ -3,17 +3,16 @@ package com.nvlhnn.order.service.domain;
 import com.nvlhnn.domain.event.publisher.DomainEventPublisher;
 import com.nvlhnn.domain.valueobject.ProductId;
 import com.nvlhnn.domain.valueobject.WarehouseId;
-import com.nvlhnn.order.service.domain.entity.Order;
-import com.nvlhnn.order.service.domain.entity.Product;
-import com.nvlhnn.order.service.domain.entity.User;
-import com.nvlhnn.order.service.domain.entity.Warehouse;
+import com.nvlhnn.order.service.domain.entity.*;
 import com.nvlhnn.order.service.domain.event.OrderCreatedEvent;
+import com.nvlhnn.order.service.domain.event.OrderPaymentEvent;
 import com.nvlhnn.order.service.domain.exception.OrderDomainException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
@@ -23,15 +22,25 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     private static final String UTC = "UTC";
 
     @Override
-    public OrderCreatedEvent validateAndInitiateOrder(Order order, Warehouse warehouse,
+    public OrderCreatedEvent validateAndInitiateOrder(Order order,
+                                                     List<Stock> stocks,
+                                                      Warehouse nearestWarehouse,
                                                       DomainEventPublisher<OrderCreatedEvent>
                                                               orderCreatedEventDomainEventPublisher) {
-        validateSeller(warehouse);
-//        setOrderProductInformation(order, warehouse);
+
+        order.validateOrderItems(stocks);
+
+//        List<Stock> stocksNeedToTransfer = new java.util.ArrayList<>();
+//        for (OrderItem orderItem: order.getItems()) {
+//            stocksNeedToTransfer.addAll(order.findAndTransferStock(nearestWarehouse.getId(), stocks, orderItem.getProduct().getId(), orderItem.getQuantity()));
+//        }
+//
+//        log.info(stocksNeedToTransfer.toString());
+
         order.validateOrder();
         order.initializeOrder();
         log.info("Order with id: {} is initiated", order.getId().getValue());
-        return new OrderCreatedEvent(order, ZonedDateTime.now(ZoneId.of(UTC)), orderCreatedEventDomainEventPublisher);
+        return new OrderCreatedEvent(order, nearestWarehouse, ZonedDateTime.now(ZoneId.of(UTC)), orderCreatedEventDomainEventPublisher);
     }
 
     @Override
@@ -46,6 +55,21 @@ public class OrderDomainServiceImpl implements OrderDomainService {
             throw new OrderDomainException("Seller with id " + warehuse.getId().getValue() +
                     " is currently not active!");
         }
+    }
+
+    @Override
+    public OrderPaymentEvent payOrder(Order order, DomainEventPublisher<OrderPaymentEvent> orderPaymentEventDomainEventPublisher) {
+        order.validatePayOrder();
+        order.payOrder();
+        log.info("Order with id: {} is paid", order.getId().getValue());
+        return new OrderPaymentEvent(order, ZonedDateTime.now(ZoneId.of(UTC)), orderPaymentEventDomainEventPublisher);
+    }
+
+    @Override
+    public OrderPaymentEvent cancelOrder(Order order, DomainEventPublisher<OrderPaymentEvent> orderPaymentEventDomainEventPublisher) {
+        order.cancelOrder();
+        log.info("Order with id: {} is cancelled", order.getId().getValue());
+        return new OrderPaymentEvent(order, ZonedDateTime.now(ZoneId.of(UTC)), orderPaymentEventDomainEventPublisher);
     }
 
     @Override

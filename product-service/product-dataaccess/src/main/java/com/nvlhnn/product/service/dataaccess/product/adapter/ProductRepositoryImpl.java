@@ -5,6 +5,8 @@ import com.nvlhnn.product.service.dataaccess.product.mapper.ProductDataAccessMap
 import com.nvlhnn.product.service.dataaccess.product.repository.ProductJpaRepository;
 import com.nvlhnn.product.service.domain.entity.Product;
 import com.nvlhnn.product.service.domain.ports.output.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,10 +37,9 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public List<Product> findAll() {
-        return productJpaRepository.findAll().stream()
-                .map(productDataAccessMapper::productEntityToProduct)
-                .collect(Collectors.toList());
+    public Page<Product> findAll(Pageable pageable) {
+        return productJpaRepository.findAll(pageable)
+                .map(productDataAccessMapper::productEntityToProduct);
     }
 
 }

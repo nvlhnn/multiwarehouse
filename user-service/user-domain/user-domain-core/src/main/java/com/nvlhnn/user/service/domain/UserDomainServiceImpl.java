@@ -15,7 +15,7 @@ public class UserDomainServiceImpl implements UserDomainService {
     private static final String UTC = "UTC";
 
     @Override
-    public UserCreatedEvent createUser(User user, DomainEventPublisher<UserCreatedEvent> publisher) {
+    public UserCreatedEvent initializeUser(User user, DomainEventPublisher<UserCreatedEvent> publisher) {
         user.validateUser();
         user.initializeUser();
         user.generateToken("secretKey");

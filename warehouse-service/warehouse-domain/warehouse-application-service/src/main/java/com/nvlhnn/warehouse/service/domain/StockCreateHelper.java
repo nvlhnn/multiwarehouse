@@ -52,8 +52,13 @@ public class StockCreateHelper {
         Stock stock = warehouseDataMapper.createStockfromCreateStockCommand(createStockCommand);
         validateStockDoesNotExist(stock);
 
-        StockCreatedEvent stockCreatedEvent = warehouseDomainService.createStock(stock, warehouse, product, stockCreatedEventPublisher);
+        StockCreatedEvent stockCreatedEvent = warehouseDomainService.validateAndInitializeStock(stock, warehouse, product, stockCreatedEventPublisher);
         saveStock(stock);
+
+        Integer productTotalQuantity = stockRepository.getProductTotalQuantity(product.getId());
+        productTotalQuantity = productTotalQuantity != null ? productTotalQuantity : 0;
+        stockCreatedEvent.setProductTotalQuantity(productTotalQuantity);
+
 
         return stockCreatedEvent;
     }

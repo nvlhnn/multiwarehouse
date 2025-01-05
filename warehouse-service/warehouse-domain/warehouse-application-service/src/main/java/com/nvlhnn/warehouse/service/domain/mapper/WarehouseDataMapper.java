@@ -11,9 +11,12 @@ import com.nvlhnn.warehouse.service.domain.entity.Product;
 import com.nvlhnn.warehouse.service.domain.entity.Stock;
 import com.nvlhnn.warehouse.service.domain.entity.Warehouse;
 import com.nvlhnn.warehouse.service.domain.valueobject.StreetAddress;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class WarehouseDataMapper {
@@ -104,6 +107,29 @@ public class WarehouseDataMapper {
                 productResponseMessage.getName(),
                 productResponseMessage.getPrice()
         );
+    }
+
+
+    public WarehouseListResponse warehousePageToWarehouseListResponse(Page<Warehouse> warehousePage) {
+        List<WarehouseResponse> warehouseResponses = warehousePage.getContent().stream()
+                .map(warehouse -> WarehouseResponse.builder()
+                        .warehouseId(warehouse.getId().getValue())
+                        .name(warehouse.getName())
+                        .isActive(warehouse.isActive())
+                        .city(warehouse.getStreetAddress().getCity())
+                        .street(warehouse.getStreetAddress().getStreet())
+                        .postalCode(warehouse.getStreetAddress().getPostalCode())
+                        .latitude(warehouse.getStreetAddress().getLatitude())
+                        .longitude(warehouse.getStreetAddress().getLongitude())
+                        .build())
+                .collect(Collectors.toList());
+
+        return WarehouseListResponse.builder()
+                .warehouses(warehouseResponses)
+                .totalElements(warehousePage.getTotalElements())
+                .totalPages(warehousePage.getTotalPages())
+                .currentPage(warehousePage.getNumber())
+                .build();
     }
 
 }

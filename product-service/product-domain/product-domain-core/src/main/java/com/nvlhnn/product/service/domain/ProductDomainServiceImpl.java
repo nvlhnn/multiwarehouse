@@ -15,12 +15,18 @@ public class ProductDomainServiceImpl implements ProductDomainService {
     private static final String UTC = "UTC";
 
     @Override
-    public ProductCreatedEvent createProduct(Product product, DomainEventPublisher<ProductCreatedEvent> publisher) {
+    public ProductCreatedEvent initializeProduct(Product product, DomainEventPublisher<ProductCreatedEvent> publisher) {
         product.validateProduct();
         product.initializeProduct();
 
         log.info("Product with id: {} is created", product.getId());
         return new ProductCreatedEvent(product, ZonedDateTime.now(ZoneId.of(UTC)), publisher);
+    }
+
+    @Override
+    public void patchProduct(Product product, Integer totalStock) {
+        product.updateTotalStock(totalStock);
+        log.info("Product with id: {} is updated", product.getId());
     }
 
 

@@ -20,4 +20,9 @@ public interface StockRepository {
 
     StockTransfer saveStockTransfer(StockTransfer stockTransfer);
 
+    Optional<List<Stock>> findByProductIdIn(List<ProductId> productIds);
+
+    Integer getProductTotalQuantity(ProductId productId);
+
+
 }

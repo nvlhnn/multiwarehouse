@@ -13,18 +13,15 @@ import java.util.UUID;
 @Builder
 public class ProductResponse {
 
-    @NotNull
     private final UUID productId;
 
-    @NotNull
     private final String name;
 
-    @NotNull
     private final BigDecimal price;
 
-    @NotNull
     private final Integer totalStock;
 
-    @NotNull
+    private final String imageUrl;
+
     private final String message;
 }

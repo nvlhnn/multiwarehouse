@@ -2,7 +2,6 @@ package com.nvlhnn.product.service.domain;
 
 import com.nvlhnn.domain.valueobject.ProductId;
 import com.nvlhnn.product.service.domain.dto.post.CreateProductCommand;
-import com.nvlhnn.product.service.domain.dto.response.ProductResponse;
 import com.nvlhnn.product.service.domain.entity.Product;
 import com.nvlhnn.product.service.domain.event.ProductCreatedEvent;
 import com.nvlhnn.product.service.domain.exception.ProductDomainException;
@@ -12,8 +11,6 @@ import com.nvlhnn.product.service.domain.ports.output.repository.ProductReposito
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -36,7 +33,7 @@ public class ProductHelper {
     public ProductCreatedEvent persistProduct(CreateProductCommand productCommand) {
         Product product = productDataMapper.productCommandToProduct(productCommand);
 
-        ProductCreatedEvent productCreatedEvent = productDomainService.createProduct(product, null );
+        ProductCreatedEvent productCreatedEvent = productDomainService.initializeProduct(product, null );
         saveProduct(product);
         log.info("Product with name: {} has been successfully added", product.getName());
         return productCreatedEvent;

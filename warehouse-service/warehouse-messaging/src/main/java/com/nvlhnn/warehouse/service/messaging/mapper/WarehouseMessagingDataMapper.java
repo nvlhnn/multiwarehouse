@@ -1,15 +1,20 @@
 package com.nvlhnn.warehouse.service.messaging.mapper;
 
+import com.nvlhnn.payment.kafka.avro.model.PaymentResponseAvroModel;
 import com.nvlhnn.product.kafka.avro.model.ProductResponseAvroModel;
 import com.nvlhnn.user.kafka.avro.model.UserResponseAvroModel;
 import com.nvlhnn.warehouse.kafka.avro.model.StockCreatedAvroModel;
+import com.nvlhnn.warehouse.kafka.avro.model.StockUpdatedAvroModel;
 import com.nvlhnn.warehouse.kafka.avro.model.WarehouseCreatedAvroModel;
 import com.nvlhnn.warehouse.kafka.order.avro.model.OrderResponseAvroModel;
+import com.nvlhnn.warehouse.kafka.order.avro.model.OrderStatus;
 import com.nvlhnn.warehouse.service.domain.dto.message.OrderResponse;
+import com.nvlhnn.warehouse.service.domain.dto.message.PaymentResponse;
 import com.nvlhnn.warehouse.service.domain.dto.message.ProductResponseMessage;
 import com.nvlhnn.warehouse.service.domain.dto.message.UserResponseMessage;
 import com.nvlhnn.warehouse.service.domain.entity.Warehouse;
 import com.nvlhnn.warehouse.service.domain.event.StockCreatedEvent;
+import com.nvlhnn.warehouse.service.domain.event.StockUpdatedEvent;
 import com.nvlhnn.warehouse.service.domain.event.WarehouseCreatedEvent;
 import org.springframework.stereotype.Component;
 
@@ -93,7 +98,43 @@ public class WarehouseMessagingDataMapper {
                 .setWarehouseLongitude(stockCreatedEvent.getWarehouseLongitude())
                 .setStock(stockCreatedEvent.getStock().getQuantity())
                 .setSagaId(UUID.randomUUID())
+                .setTotalProductStock(stockCreatedEvent.getProductTotalQuantity())
                 .setEventTimestamp(stockCreatedEvent.getCreatedAt().toInstant())
                 .build();
+    }
+    public StockUpdatedAvroModel stockUpdatedEventToStockUpdatedAvroModel(StockUpdatedEvent stockUpdatedEvent) {
+        return StockUpdatedAvroModel.newBuilder()
+                .setId(UUID.randomUUID())
+                .setStockId(stockUpdatedEvent.getStock().getId().getValue())
+                .setProductId(stockUpdatedEvent.getStock().getProductId().getValue())
+                .setWarehouseId(stockUpdatedEvent.getStock().getWarehouseId().getValue())
+                .setStock(stockUpdatedEvent.getStock().getQuantity())
+                .setSagaId(UUID.randomUUID())
+                .setTotalProductStock(stockUpdatedEvent.getProductTotalQuantity())
+                .setEventTimestamp(stockUpdatedEvent.getCreatedAt().toInstant())
+                .build();
+    }
+
+    public PaymentResponse paymentResponseAvroModelToPaymentResponse(PaymentResponseAvroModel paymentResponseAvroModel) {
+        return PaymentResponse.builder()
+                .sagaId(paymentResponseAvroModel.getSagaId().toString())
+                .orderId(paymentResponseAvroModel.getOrderId().toString())
+                .status(mapOrderStatus(paymentResponseAvroModel.getOrderStatus()))
+                .build();
+    }
+
+    private com.nvlhnn.domain.valueobject.OrderStatus mapOrderStatus(com.nvlhnn.payment.kafka.avro.model.OrderStatus orderStatus) {
+        switch (orderStatus) {
+            case PAID:
+                return com.nvlhnn.domain.valueobject.OrderStatus.PAID;
+            case CANCELLING:
+                return com.nvlhnn.domain.valueobject.OrderStatus.CANCELLING;
+            case CANCELLED:
+                return com.nvlhnn.domain.valueobject.OrderStatus.CANCELLED;
+            case PENDING:
+                return com.nvlhnn.domain.valueobject.OrderStatus.PENDING;
+            default:
+                throw new IllegalArgumentException("Unknown OrderStatus: " + orderStatus);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.nvlhnn.order.service.dataaccess.order.entity;
 
+import com.nvlhnn.order.service.dataaccess.product.entity.ProductEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,14 +17,19 @@ import java.util.UUID;
 @Table(name = "order_items")
 @Entity
 public class OrderItemEntity {
+
     @Id
     private Long id;
+
     @Id
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ORDER_ID")
     private OrderEntity order;
 
-    private UUID productId;
+    @ManyToOne(fetch = FetchType.EAGER) // Reference to the ProductEntity
+    @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "id", nullable = false)
+    private ProductEntity product;
+
     private BigDecimal price;
     private Integer quantity;
     private BigDecimal subTotal;
