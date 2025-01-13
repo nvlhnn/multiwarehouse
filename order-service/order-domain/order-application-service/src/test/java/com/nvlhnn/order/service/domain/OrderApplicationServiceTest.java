@@ -16,6 +16,7 @@ import com.nvlhnn.order.service.domain.event.OrderCreatedEvent;
 import com.nvlhnn.order.service.domain.exception.OrderDomainException;
 import com.nvlhnn.order.service.domain.mapper.OrderDataMapper;
 import com.nvlhnn.order.service.domain.ports.input.service.OrderApplicationService;
+import com.nvlhnn.order.service.domain.ports.output.message.publisher.OrderPaymentUpdateMessagePublisher;
 import com.nvlhnn.order.service.domain.ports.output.repository.*;
 import com.nvlhnn.order.service.domain.ports.output.message.publisher.OrderCreatedPaymentRequestMessagePublisher;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,6 +61,9 @@ public class OrderApplicationServiceTest {
 
     @MockBean
     private OrderCreatedPaymentRequestMessagePublisher orderCreatedPaymentRequestMessagePublisher;
+
+    @MockBean
+    private OrderPaymentUpdateMessagePublisher orderPaymentUpdateMessagePublisher;
 
     @Autowired
     private OrderDataMapper orderDataMapper;

@@ -139,6 +139,7 @@ public class OrderDataMapper {
                 .orderStatus(order.getOrderStatus())
                 .orderAddress(streetAddressToOrderAddress(order.getDeliveryAddress()))
                 .totalAmount(order.getPrice().getAmount())
+                .expiredAt(order.getExpiredAt())
                 .warehouse(warehouseToWarehouseResponse(warehouse))
                 .items(orderItemsToOrderItemResponse(order.getItems()))
                 .message(message)
