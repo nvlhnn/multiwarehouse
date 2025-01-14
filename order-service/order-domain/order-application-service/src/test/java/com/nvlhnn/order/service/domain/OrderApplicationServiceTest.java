@@ -61,6 +61,9 @@ public class OrderApplicationServiceTest {
     private StockRepository stockRepository;
 
     @MockBean
+    private XenditRepository xenditRepository;
+
+    @MockBean
     private OrderCreatedPaymentRequestMessagePublisher orderCreatedPaymentRequestMessagePublisher;
 
     @MockBean
@@ -100,10 +103,7 @@ public class OrderApplicationServiceTest {
                 .subTotal(PRODUCT_PRICE.multiply(new BigDecimal(PRODUCT_QUANTITY)))
                 .build();
 
-        Invoice invoice = new Invoice(
-                UUID.randomUUID().toString(),
-                "http://localhost:8080/invoces/"
-        );
+
 
         createOrderCommand = CreateOrderCommand.builder()
                 .price(PRODUCT_PRICE.multiply(new BigDecimal(PRODUCT_QUANTITY)))
@@ -131,6 +131,8 @@ public class OrderApplicationServiceTest {
         user.initializeUser();
         when(userRepository.findById(new com.nvlhnn.domain.valueobject.UserId(USER_ID)))
                 .thenReturn(Optional.of(user));
+
+
 
         // Mock warehouseRepository.findNearestLocation
         Warehouse warehouse = Warehouse.builder()
@@ -164,7 +166,17 @@ public class OrderApplicationServiceTest {
                 .items(orderDataMapper.orderItemsToOrderItemEntities(createOrderCommand.getItems()))
                 .build();
         order.initializeOrder();
+
+        Invoice invoice = new Invoice(
+                UUID.randomUUID().toString(),
+                "http://localhost:8080/invoces/"
+        );
+        when(xenditRepository.createInvoice(any(Order.class), any(User.class)))
+                .thenReturn(invoice);
+
+
         when(orderRepository.save(any(Order.class))).thenReturn(order);
+
 
 //        when(request.getAttribute("userId")).thenReturn(USER_ID.toString());
 
