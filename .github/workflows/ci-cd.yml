@@ -52,74 +52,52 @@ jobs:
         run: |
           gcloud auth configure-docker asia-southeast2-docker.pkg.dev
 
-      # Build and push Docker images
-      - name: Build and push order-service
-        run: |
-          docker build -t asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/order.service:${{ github.sha }}
-          docker push asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/order.service:${{ github.sha }}
-
+      # Build, tag, and push Docker image
       - name: Build and push warehouse-service
         run: |
-          docker build -t asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:${{ github.sha }}
-          docker push asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:${{ github.sha }}
+          docker tag com.nvlhnn/warehouse.service:1.0-SNAPSHOT asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:1.0-SNAPSHOT
+          docker push asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:1.0-SNAPSHOT
 
-      # Repeat for other services: user-service, product-service
-      - name: Build and push user-service
+      - name: Build and push order-service
         run: |
-          docker build -t asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/user.service:${{ github.sha }}
-          docker push asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/user.service:${{ github.sha }}
-
-      - name: Build and push product-service
-        run: |
-          docker build -t asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/product.service:${{ github.sha }}
-          docker push asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/product.service:${{ github.sha }}
+          docker tag com.nvlhnn/order.service:1.0-SNAPSHOT asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/order.service:1.0-SNAPSHOT
+          docker push asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/order.service:1.0-SNAPSHOT
 
     outputs:
       image-sha: ${{ github.sha }}
 
-#  deploy:
-#    name: Deploy to GKE
-#    needs: build
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      # Checkout code
-#      - name: Checkout code
-#        uses: actions/checkout@v3
-#
-#      # Authenticate to Google Cloud
-#      - name: Authenticate to Google Cloud
-#        uses: google-github-actions/auth@v1
-#        with:
-#          credentials_json: ${{ secrets.GCP_SA_KEY }}
-#
-#      # Set up Gcloud SDK
-#      - name: Set up Gcloud SDK
-#        uses: google-github-actions/setup-gcloud@v1
-#        with:
-#          project_id: ${{ secrets.GCP_PROJECT_ID }}
-#          install_components: 'kubectl'
-#
-#      # Get credentials for GKE
-#      - name: Get GKE Credentials
-#        run: |
-#          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
-#            --region ${{ secrets.GCP_REGION }} \
-#            --project ${{ secrets.GCP_PROJECT_ID }}
-#
-#      # Update Kubernetes manifests with new image tags
-#      - name: Update Kubernetes manifests
-#        run: |
-#          sed -i 's|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/order.service:.*|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/order.service:${{ needs.build.outputs.image-sha }}|' kubernetes/application-deployment.yml
-#          sed -i 's|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:.*|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:${{ needs.build.outputs.image-sha }}|' kubernetes/application-deployment.yml
-#          sed -i 's|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/user.service:.*|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/user.service:${{ needs.build.outputs.image-sha }}|' kubernetes/application-deployment.yml
-#          sed -i 's|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/product.service:.*|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/product.service:${{ needs.build.outputs.image-sha }}|' kubernetes/application-deployment.yml
-#
-#      # Apply Kubernetes manifests
-#      - name: Deploy to GKE
-#        run: |
-#          helm upgrade --install gke-confluent-kafka ../cp-helm-charts
-#          kubectl apply -f kafka-client.yml
-#          kubectl cp create-topics.sh kafka-client:/kafka-client-storage
-#          kubectl exec kafka-client -- sh /kafka-client-storage/create-topics.sh gke-confluent-kafka-cp-zookeeper-headless
-#          kubectl apply -f kubernetes/application-deployment.yml
+  deploy:
+    name: Deploy to GKE
+    #    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Authenticate to Google Cloud
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # Set up Gcloud SDK
+      - name: Set up Gcloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          install_components: 'kubectl'
+
+      # 4. Get GKE Credentials
+      - name: Get GKE Credentials
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
+            --zone ${{ secrets.GKE_CLUSTER_ZONE }} \
+            --project ${{ secrets.GCP_PROJECT_ID }}
+
+      # Apply Kubernetes manifests
+      - name: Apply Kubernetes Manifests
+        run: |
+          cd infrastructure/kubernetes/
+          kubectl replcae -f application-deployment-with-postgre.yml
