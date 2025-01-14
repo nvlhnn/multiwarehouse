@@ -9,80 +9,97 @@ on:
       - master
 
 jobs:
-#  build:
-#    name: Build and Push Docker Images
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      # Checkout code
-#      - name: Checkout code
-#        uses: actions/checkout@v3
-#
-#      # Set up JDK
-#      - name: Set up JDK 17
-#        uses: actions/setup-java@v3
-#        with:
-#          java-version: '17'
-#          distribution: 'temurin'
-#
-#      # Cache Maven dependencies
-#      - name: Cache Maven dependencies
-#        uses: actions/cache@v3
-#        with:
-#          path: ~/.m2/repository
-#          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-#          restore-keys: |
-#            ${{ runner.os }}-maven-
-#
-#      # Build with Maven
-#      - name: Build with Maven
-#        run: mvn clean install
-#
-#      # Set up Docker Buildx
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v2
-#
-#      # Log in to Google Artifact Registry
-#      - name: Authenticate to Google Cloud
-#        uses: google-github-actions/auth@v1
-#        with:
-#          credentials_json: ${{ secrets.GCP_SA_KEY }}
-#
-#      - name: Configure Docker to use Artifact Registry
-#        run: |
-#          gcloud auth configure-docker asia-southeast2-docker.pkg.dev
-#
-#      # Build, tag, and push Docker image
-#      - name: Build and push warehouse-service
-#        run: |
-#          docker tag com.nvlhnn/warehouse.service:1.0-SNAPSHOT asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:1.0-SNAPSHOT
-#          docker push asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:1.0-SNAPSHOT
-#
-#      - name: Build and push order-service
-#        run: |
-#          docker tag com.nvlhnn/order.service:1.0-SNAPSHOT asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/order.service:1.0-SNAPSHOT
-#          docker push asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/order.service:1.0-SNAPSHOT
-#
-#    outputs:
-#      image-sha: ${{ github.sha }}
-
-  deploy:
-    name: Deploy to GKE
-#    needs: build
+  build:
+    name: Build and Push Docker Images
     runs-on: ubuntu-latest
 
+    outputs:
+      image-sha: ${{ github.sha }}
+
     steps:
-      # Checkout code
+      # 1. Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Authenticate to Google Cloud
+      # 2. Set up JDK
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. Cache Maven dependencies
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      # 4. Build with Maven
+      - name: Build with Maven
+        run: mvn clean install
+
+      # 5. Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # 6. Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      # Set up Gcloud SDK
+      # 7. Configure Docker to use Artifact Registry
+      - name: Configure Docker to use Artifact Registry
+        run: |
+          echo "${{ secrets.GCP_SA_KEY }}" > /tmp/key.json
+          gcloud auth activate-service-account --key-file=/tmp/key.json
+          gcloud auth configure-docker asia-southeast2-docker.pkg.dev
+
+      # 8. Build and push Docker images for each service
+      - name: Build and push warehouse-service
+        run: |
+          IMAGE_TAG=asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:${{ github.sha }}
+          docker build -t $IMAGE_TAG ./warehouse-service
+          docker push $IMAGE_TAG
+
+      - name: Build and push order-service
+        run: |
+          IMAGE_TAG=asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/order.service:${{ github.sha }}
+          docker build -t $IMAGE_TAG ./order-service
+          docker push $IMAGE_TAG
+
+      - name: Build and push user-service
+        run: |
+          IMAGE_TAG=asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/user.service:${{ github.sha }}
+          docker build -t $IMAGE_TAG ./user-service
+          docker push $IMAGE_TAG
+
+      - name: Build and push product-service
+        run: |
+          IMAGE_TAG=asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/product.service:${{ github.sha }}
+          docker build -t $IMAGE_TAG ./product-service
+          docker push $IMAGE_TAG
+
+  deploy:
+    name: Deploy to GKE
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Authenticate to Google Cloud
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # 3. Set up Gcloud SDK and kubectl
       - name: Set up Gcloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
@@ -96,13 +113,31 @@ jobs:
             --zone ${{ secrets.GKE_CLUSTER_ZONE }} \
             --project ${{ secrets.GCP_PROJECT_ID }}
 
-      - name: List Repository Contents
-        run: ls -la
+      # 5. Update Kubernetes Manifests with New Image Tags
+      - name: Update Kubernetes Manifests
+        run: |
+          sed -i "s|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:.*|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:${{ needs.build.outputs.image-sha }}|" infrastructure/kubernetes/application-deployment-3.yml
+          sed -i "s|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/order.service:.*|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/order.service:${{ needs.build.outputs.image-sha }}|" infrastructure/kubernetes/application-deployment-3.yml
+          sed -i "s|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/user.service:.*|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/user.service:${{ needs.build.outputs.image-sha }}|" infrastructure/kubernetes/application-deployment-3.yml
+          sed -i "s|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/product.service:.*|asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/product.service:${{ needs.build.outputs.image-sha }}|" infrastructure/kubernetes/application-deployment-3.yml
 
-      - name: pwd
-        run: pwd
-      # Apply Kubernetes manifests
+      # 6. Apply Kubernetes Manifests
       - name: Apply Kubernetes Manifests
         run: |
-          cd infrastructure/kubernetes/
-          kubectl apply -f application-deployment-3.yml
+          kubectl apply -f infrastructure/kubernetes/application-deployment-3.yml
+
+      # # 7. Deploy Kafka Using Helm
+      # - name: Deploy Kafka with Helm
+      #   run: |
+      #     helm upgrade --install gke-confluent-kafka infrastructure/kubernetes/cp-helm-charts
+
+      # # 8. Apply Kafka Client Configuration
+      # - name: Apply Kafka Client Configuration
+      #   run: |
+      #     kubectl apply -f infrastructure/kubernetes/kafka-client.yml
+
+      # # 9. Create Kafka Topics
+      # - name: Create Kafka Topics
+      #   run: |
+      #     kubectl cp infrastructure/kubernetes/create-topics.sh kafka-client:/kafka-client-storage/create-topics.sh
+      #     kubectl exec kafka-client -- sh /kafka-client-storage/create-topics.sh gke-confluent-kafka-cp-zookeeper-headless
