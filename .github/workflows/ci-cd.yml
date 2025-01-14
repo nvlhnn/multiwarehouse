@@ -78,7 +78,7 @@ jobs:
 
   deploy:
     name: Deploy to GKE
-    #    needs: build
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -110,4 +110,4 @@ jobs:
       - name: Apply Kubernetes Manifests
         run: |
           cd infrastructure/kubernetes/
-          kubectl replcae -f application-deployment-with-postgre.yml
+          kubectl replace -f application-deployment-with-postgre.yml
