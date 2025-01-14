@@ -96,7 +96,11 @@ jobs:
             --zone ${{ secrets.GKE_CLUSTER_ZONE }} \
             --project ${{ secrets.GCP_PROJECT_ID }}
 
+      - name: List Repository Contents
+        run: ls -la
 
+      - name: pwd
+        run: pwd
       # Apply Kubernetes manifests
       - name: Apply Kubernetes Manifests
         run: |
