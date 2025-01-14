@@ -68,6 +68,7 @@ jobs:
 
   deploy:
     name: Deploy to GKE
+#    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -88,12 +89,13 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           install_components: 'kubectl'
 
-      # Get credentials for GKE
+      # 4. Get GKE Credentials
       - name: Get GKE Credentials
         run: |
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
-            --region ${{ secrets.GCP_REGION }} \
+            --zone ${{ secrets.GKE_CLUSTER_ZONE }} \
             --project ${{ secrets.GCP_PROJECT_ID }}
+
 
       # Apply Kubernetes manifests
       - name: Apply Kubernetes Manifests
