@@ -32,6 +32,8 @@ public class OrderDataAccessMapper {
                 .warehouse(order.getWarehouse().getId() != null ? WarehouseEntity.builder()
                         .id(order.getWarehouse().getId().getValue())
                         .build() : null)
+                .invoiceUrl(order.getInvoiceUrl())
+                .invoiceNumber(order.getInvoiceNumber())
                 .expiredAt(order.getExpiredAt())
                 .trackingId(order.getTrackingId().getValue())
                 .address(deliveryAddressToAddressEntity(order.getDeliveryAddress()))
@@ -58,6 +60,8 @@ public class OrderDataAccessMapper {
                 .expiredAt(orderEntity.getExpiredAt())
                 .items(orderItemEntitiesToOrderItems(orderEntity.getItems()))
                 .trackingId(new TrackingId(orderEntity.getTrackingId()))
+                .invoiceUrl(orderEntity.getInvoiceUrl())
+                .invoiceNumber(orderEntity.getInvoiceNumber())
                 .orderStatus(orderEntity.getOrderStatus())
                 .failureMessages(orderEntity.getFailureMessages().isEmpty() ? new ArrayList<>() :
                         new ArrayList<>(Arrays.asList(orderEntity.getFailureMessages()

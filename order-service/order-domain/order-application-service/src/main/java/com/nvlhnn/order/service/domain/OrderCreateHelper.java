@@ -9,10 +9,8 @@ import com.nvlhnn.order.service.domain.event.*;
 import com.nvlhnn.order.service.domain.exception.*;
 import com.nvlhnn.order.service.domain.mapper.OrderDataMapper;
 import com.nvlhnn.order.service.domain.ports.output.message.publisher.OrderCreatedPaymentRequestMessagePublisher;
-import com.nvlhnn.order.service.domain.ports.output.repository.StockRepository;
-import com.nvlhnn.order.service.domain.ports.output.repository.UserRepository;
-import com.nvlhnn.order.service.domain.ports.output.repository.OrderRepository;
-import com.nvlhnn.order.service.domain.ports.output.repository.WarehouseRepository;
+import com.nvlhnn.order.service.domain.ports.output.repository.*;
+import com.nvlhnn.order.service.domain.valueobject.Invoice;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +31,8 @@ public class OrderCreateHelper {
 
     private final UserRepository userRepository;
 
+    private final XenditRepository xenditRepository;
+
     private final WarehouseRepository warehouseRepository;
 
     private final OrderDataMapper orderDataMapper;
@@ -45,6 +45,7 @@ public class OrderCreateHelper {
                              UserRepository userRepository,
                              WarehouseRepository warehouseRepository,
                              OrderDataMapper orderDataMapper,
+                             XenditRepository xenditRepository,
                              OrderCreatedPaymentRequestMessagePublisher orderCreatedEventDomainEventPublisher) {
         this.orderDomainService = orderDomainService;
         this.orderRepository = orderRepository;
@@ -52,6 +53,7 @@ public class OrderCreateHelper {
         this.userRepository = userRepository;
         this.warehouseRepository = warehouseRepository;
         this.orderDataMapper = orderDataMapper;
+        this.xenditRepository = xenditRepository;
         this.orderCreatedEventDomainEventPublisher = orderCreatedEventDomainEventPublisher;
     }
 
@@ -82,7 +84,12 @@ public class OrderCreateHelper {
         Order order = orderDataMapper.createOrderCommandToOrder(createOrderCommand, nearestWarehouse.get(), optionalUser.get());
         OrderCreatedEvent orderCreatedEvent = orderDomainService.validateAndInitiateOrder(order, stocks.get(), nearestWarehouse.get(),
                 orderCreatedEventDomainEventPublisher);
+
+        Invoice invoice = xenditRepository.createInvoice(order, optionalUser.get());
+        orderDomainService.invoicing(order, invoice);
+
         saveOrder(order);
+
         log.info("Order is created with id: {}", orderCreatedEvent.getOrder().getId().getValue());
         return orderCreatedEvent;
     }

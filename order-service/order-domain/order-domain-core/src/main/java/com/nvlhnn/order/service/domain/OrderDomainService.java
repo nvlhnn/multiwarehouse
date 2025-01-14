@@ -7,6 +7,7 @@ import com.nvlhnn.order.service.domain.entity.User;
 import com.nvlhnn.order.service.domain.entity.Warehouse;
 import com.nvlhnn.order.service.domain.event.OrderCreatedEvent;
 import com.nvlhnn.order.service.domain.event.OrderPaymentEvent;
+import com.nvlhnn.order.service.domain.valueobject.Invoice;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,8 @@ public interface OrderDomainService {
                                                DomainEventPublisher<OrderCreatedEvent> orderCreatedEventDomainEventPublisher);
 
     void validateInitialWarehouse(Warehouse warehouse);
+
+    void invoicing(Order order, Invoice invoice);
 
     void createUser(User user);
 

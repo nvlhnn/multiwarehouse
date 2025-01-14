@@ -14,6 +14,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.xendit</groupId>
+            <artifactId>xendit-java-lib</artifactId>
+            <version>1.23.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.nvlhnn</groupId>
             <artifactId>common-dataaccess</artifactId>
             <version>1.0-SNAPSHOT</version>

@@ -3,6 +3,7 @@ package com.nvlhnn.order.service.domain.entity;
 import com.nvlhnn.domain.entity.AggregateRoot;
 import com.nvlhnn.domain.valueobject.*;
 import com.nvlhnn.order.service.domain.exception.OrderDomainException;
+import com.nvlhnn.order.service.domain.valueobject.Invoice;
 import com.nvlhnn.order.service.domain.valueobject.OrderItemId;
 import com.nvlhnn.order.service.domain.valueobject.StreetAddress;
 import com.nvlhnn.order.service.domain.valueobject.TrackingId;
@@ -23,6 +24,8 @@ public class Order extends AggregateRoot<OrderId> {
     private final List<OrderItem> items;
 
     private final Warehouse warehouse;
+    private  String invoiceUrl;
+    private  String invoiceNumber;
 
     private TrackingId trackingId;
     private OrderStatus orderStatus;
@@ -66,6 +69,11 @@ public class Order extends AggregateRoot<OrderId> {
         }
         orderStatus = OrderStatus.CANCELLING;
         updateFailureMessages(failureMessages);
+    }
+
+    public void invoicing(Invoice invoice) {
+        invoiceUrl = invoice.getInvoiceUrl();
+        invoiceNumber = invoice.getId();
     }
 
     public void cancel(List<String> failureMessages) {
@@ -221,6 +229,8 @@ public class Order extends AggregateRoot<OrderId> {
         price = builder.price;
         items = builder.items;
         trackingId = builder.trackingId;
+        invoiceUrl = builder.invoiceUrl;
+        invoiceNumber = builder.invoiceNumber;
         orderStatus = builder.orderStatus;
         failureMessages = builder.failureMessages;
         expiredAt = builder.expiredAt;
@@ -255,6 +265,14 @@ public class Order extends AggregateRoot<OrderId> {
         return trackingId;
     }
 
+    public String getInvoiceUrl() {
+        return invoiceUrl;
+    }
+
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
+
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
@@ -275,6 +293,8 @@ public class Order extends AggregateRoot<OrderId> {
         private Money price;
         private List<OrderItem> items;
         private TrackingId trackingId;
+        private String invoiceUrl;
+        private String invoiceNumber;
         private OrderStatus orderStatus;
         private List<String> failureMessages;
         private Date expiredAt;
@@ -314,6 +334,16 @@ public class Order extends AggregateRoot<OrderId> {
 
         public Builder trackingId(TrackingId val) {
             trackingId = val;
+            return this;
+        }
+
+        public Builder invoiceUrl(String val) {
+            invoiceUrl = val;
+            return this;
+        }
+
+        public Builder invoiceNumber(String val) {
+            invoiceNumber = val;
             return this;
         }
 

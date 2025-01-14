@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +20,10 @@ public class OrderResponse {
     @NotNull
     private final UUID orderTrackingId;
     @NotNull
+    private final String invoiceUrl;
+    @NotNull
+    private final String invoiceNumber;
+    @NotNull
     private final UUID orderId;
     @NotNull
     private final OrderAddress orderAddress;
@@ -26,6 +31,8 @@ public class OrderResponse {
     private WarehouseRespone warehouse;
     @NotNull
     private final OrderStatus orderStatus;
+
+    private final Date expiredAt;
 
     @NotNull
     private final BigDecimal totalAmount;

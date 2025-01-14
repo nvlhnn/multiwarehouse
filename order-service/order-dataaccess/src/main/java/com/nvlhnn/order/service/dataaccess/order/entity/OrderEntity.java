@@ -32,6 +32,10 @@ public class OrderEntity {
 
     private UUID trackingId;
 
+    private String invoiceUrl;
+
+    private String invoiceNumber;
+
     private BigDecimal price;
 
     @Enumerated(EnumType.STRING)
