@@ -68,7 +68,7 @@ jobs:
 
   deploy:
     name: Deploy to GKE
-    #    needs: build
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
