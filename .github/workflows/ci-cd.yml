@@ -56,8 +56,8 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build -t com.nvlhnn/warehouse.service:1.0-SNAPSHOT .
-          docker tag com.nvlhnn/warehouse.service:1.0-SNAPSHOT asia-southeast2-docker.pkg.dev/long-canto-439612-d1/com-multiwarehouse-app-repository/warehouse.service:1.0-SNAPSHOT
-          docker push asia-southeast2-docker.pkg.dev/long-canto-439612-d1/com-multiwarehouse-app-repository/warehouse.service:1.0-SNAPSHOT
+          docker tag com.nvlhnn/warehouse.service:1.0-SNAPSHOT asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:1.0-SNAPSHOT
+          docker push asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:1.0-SNAPSHOT
 
       - name: Build and push warehouse-service
         run: |
