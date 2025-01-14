@@ -137,6 +137,8 @@ public class OrderDataMapper {
                 .orderTrackingId(order.getTrackingId().getValue())
                 .orderId(order.getId().getValue())
                 .orderStatus(order.getOrderStatus())
+                .invoiceNumber(order.getInvoiceNumber())
+                .invoiceUrl(order.getInvoiceUrl())
                 .orderAddress(streetAddressToOrderAddress(order.getDeliveryAddress()))
                 .totalAmount(order.getPrice().getAmount())
                 .expiredAt(order.getExpiredAt())

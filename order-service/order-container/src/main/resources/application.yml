@@ -14,6 +14,8 @@ order-service:
   stock-updated-topic-name:  stock-updated
   payment-response-topic-name: payment-response
 
+xendit:
+  secret: xnd_development_1ozuayL7p7VSpc7rPXrGxbBUzy06zT4pAfMGHYxYWBHuLV4hSvwaaxzvluqXo5x
 spring:
   jpa:
     open-in-view: false

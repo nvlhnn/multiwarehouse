@@ -16,13 +16,3 @@ spec:
         - "exec tail -f /dev/null"
   volumes:
     - name: kafka-client-storage
-
-docker tag com.nvlhnn/warehouse.service:1.0-SNAPSHOT asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:1.0-SNAPSHOT 
-docker tag com.nvlhnn/order.service:1.0-SNAPSHOT asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/order.service:1.0-SNAPSHOT 
-docker tag com.nvlhnn/user.service:1.0-SNAPSHOT asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/user.service:1.0-SNAPSHOT 
-docker tag com.nvlhnn/product.service:1.0-SNAPSHOT asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/product.service:1.0-SNAPSHOT
-
-docker push asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/warehouse.service:1.0-SNAPSHOT
-docker push asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/order.service:1.0-SNAPSHOT
-docker push asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/user.service:1.0-SNAPSHOT
-docker push asia-southeast2-docker.pkg.dev/multiwarehouse-446912/com-multiwarehouse-app-repository/product.service:1.0-SNAPSHOT

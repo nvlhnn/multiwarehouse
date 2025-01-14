@@ -72,9 +72,15 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/pay/{orderId}")
-    public ResponseEntity<OrderResponse> payment(@PathVariable String orderId) {
-        OrderResponse orderResponse = orderApplicationService.payment(orderId.toString());
+    @PostMapping("/pay")
+    public ResponseEntity<OrderResponse> payment(@RequestBody OrderPaidCommand orderPaidCommand) {
+
+        String orderId = orderPaidCommand.getExternalId();
+        if (orderId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        OrderResponse orderResponse = orderApplicationService.payment(orderId);
         return ResponseEntity.ok(orderResponse);
     }
 

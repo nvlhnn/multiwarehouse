@@ -20,6 +20,10 @@ public class OrderResponse {
     @NotNull
     private final UUID orderTrackingId;
     @NotNull
+    private final String invoiceUrl;
+    @NotNull
+    private final String invoiceNumber;
+    @NotNull
     private final UUID orderId;
     @NotNull
     private final OrderAddress orderAddress;

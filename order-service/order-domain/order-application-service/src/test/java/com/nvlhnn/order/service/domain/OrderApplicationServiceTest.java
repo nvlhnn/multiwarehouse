@@ -19,6 +19,7 @@ import com.nvlhnn.order.service.domain.ports.input.service.OrderApplicationServi
 import com.nvlhnn.order.service.domain.ports.output.message.publisher.OrderPaymentUpdateMessagePublisher;
 import com.nvlhnn.order.service.domain.ports.output.repository.*;
 import com.nvlhnn.order.service.domain.ports.output.message.publisher.OrderCreatedPaymentRequestMessagePublisher;
+import com.nvlhnn.order.service.domain.valueobject.Invoice;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -98,6 +99,11 @@ public class OrderApplicationServiceTest {
                 .price(PRODUCT_PRICE)
                 .subTotal(PRODUCT_PRICE.multiply(new BigDecimal(PRODUCT_QUANTITY)))
                 .build();
+
+        Invoice invoice = new Invoice(
+                UUID.randomUUID().toString(),
+                "http://localhost:8080/invoces/"
+        );
 
         createOrderCommand = CreateOrderCommand.builder()
                 .price(PRODUCT_PRICE.multiply(new BigDecimal(PRODUCT_QUANTITY)))

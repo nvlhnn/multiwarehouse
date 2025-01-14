@@ -7,6 +7,7 @@ import com.nvlhnn.order.service.domain.entity.*;
 import com.nvlhnn.order.service.domain.event.OrderCreatedEvent;
 import com.nvlhnn.order.service.domain.event.OrderPaymentEvent;
 import com.nvlhnn.order.service.domain.exception.OrderDomainException;
+import com.nvlhnn.order.service.domain.valueobject.Invoice;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZoneId;
@@ -22,11 +23,11 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     private static final String UTC = "UTC";
 
     @Override
-    public OrderCreatedEvent validateAndInitiateOrder(Order order,
-                                                     List<Stock> stocks,
-                                                      Warehouse nearestWarehouse,
-                                                      DomainEventPublisher<OrderCreatedEvent>
-                                                              orderCreatedEventDomainEventPublisher) {
+    public OrderCreatedEvent validateAndInitiateOrder(
+            Order order,
+            List<Stock> stocks,
+            Warehouse nearestWarehouse,
+            DomainEventPublisher<OrderCreatedEvent> orderCreatedEventDomainEventPublisher) {
 
         order.validateOrderItems(stocks);
 
@@ -41,6 +42,12 @@ public class OrderDomainServiceImpl implements OrderDomainService {
         order.initializeOrder();
         log.info("Order with id: {} is initiated", order.getId().getValue());
         return new OrderCreatedEvent(order, nearestWarehouse, ZonedDateTime.now(ZoneId.of(UTC)), orderCreatedEventDomainEventPublisher);
+    }
+
+    @Override
+    public void invoicing(Order order, Invoice invoice) {
+        order.invoicing(invoice);
+        log.info("Order with id: {} is invoiced", order.getId().getValue());
     }
 
     @Override

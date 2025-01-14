@@ -22,15 +22,18 @@ public class OrderPaymentKafkaMessagePublisher implements OrderPaymentUpdateMess
     private final OrderServiceConfigData orderServiceConfigData;
     private final KafkaProducer<String, PaymentResponseAvroModel> kafkaProducer;
     private final KafkaMessageHelper orderKafkaMessageHelper;
+    private final WebSocketPublisher webSocketPublisher;
 
     public OrderPaymentKafkaMessagePublisher(OrderMessagingDataMapper orderMessagingDataMapper,
                                              OrderServiceConfigData orderServiceConfigData,
                                              KafkaProducer<String, PaymentResponseAvroModel> kafkaProducer,
+                                             WebSocketPublisher webSocketPublisher,
                                              KafkaMessageHelper kafkaMessageHelper
                                             ) {
         this.orderMessagingDataMapper = orderMessagingDataMapper;
         this.orderServiceConfigData = orderServiceConfigData;
         this.kafkaProducer = kafkaProducer;
+        this.webSocketPublisher = webSocketPublisher;
         this.orderKafkaMessageHelper = kafkaMessageHelper;
     }
 
@@ -51,6 +54,9 @@ public class OrderPaymentKafkaMessagePublisher implements OrderPaymentUpdateMess
                                     paymentResponseAvroModel,
                                     orderId,
                                     "paymentResponseAvroModel"));
+
+            log.info("ws publishing to /topic/order-paid/" + domainEvent.getOrder().getUserId());
+            webSocketPublisher.publish("/topic/order-paid/" + domainEvent.getOrder().getUserId().toString(), "New order paid with ID: " + orderId);
 
             log.info("PaymentRequestAvroModel sent to Kafka for order id: {}", paymentResponseAvroModel.getOrderId());
         } catch (Exception e) {
