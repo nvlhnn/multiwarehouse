@@ -104,5 +104,5 @@ jobs:
       # Apply Kubernetes manifests
       - name: Apply Kubernetes Manifests
         run: |
-          cd com-ecommerce-app-infra
+          cd infrastructure/kubernetes/
           kubectl apply -f application-deployment.yml
