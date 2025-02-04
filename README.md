@@ -115,10 +115,10 @@ Example `application.yml` snippet for database configuration:
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/<database_name>
+    url: jdbc:postgresql://127.0.0.1:5432/<db_name>?currentSchema=<db_schema>>&binaryTransfer=true&reWriteBatchedInserts=true&stringtype=unspecified
     username: <db_user>
     password: <db_password>
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -170,7 +170,16 @@ Deploy Kafka clients:
 kubectl apply -f kafka-client.yml
 ```
 
-### 2. Deploy Services
+### 2. Create Topics
+
+```bash
+kubectl cp create-topics-local.sh kafka-client:/kafka-client-storage
+kubectl exec -it kafka-client -- /bin/bash
+sh ../../kafka-client-storage/create-topics-local.sh my-confluent-cp-zookeeper-headless
+```
+
+
+### 3. Deploy Services
 
 Apply Kubernetes deployment configurations for each service:
 

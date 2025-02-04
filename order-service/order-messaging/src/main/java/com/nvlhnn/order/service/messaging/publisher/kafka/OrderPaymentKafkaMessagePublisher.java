@@ -55,8 +55,8 @@ public class OrderPaymentKafkaMessagePublisher implements OrderPaymentUpdateMess
                                     orderId,
                                     "paymentResponseAvroModel"));
 
-            log.info("ws publishing to /topic/order-paid/" + domainEvent.getOrder().getUserId());
-            webSocketPublisher.publish("/topic/order-paid/" + domainEvent.getOrder().getUserId().toString(), "New order paid with ID: " + orderId);
+            log.info("ws publishing to /topic/order-paid/" + domainEvent.getOrder().getUserId().getValue().toString());
+            webSocketPublisher.publish("/topic/order-paid/" + domainEvent.getOrder().getUserId().getValue().toString(), "New order paid with ID: " + orderId);
 
             log.info("PaymentRequestAvroModel sent to Kafka for order id: {}", paymentResponseAvroModel.getOrderId());
         } catch (Exception e) {

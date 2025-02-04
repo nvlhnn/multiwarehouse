@@ -22,6 +22,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL9Dialect
+        default_schema: "\"user\""
     hibernate:
       ddl-auto: update
   datasource:
@@ -29,7 +30,7 @@ spring:
     username: postgres
     password: 11111111
     driver-class-name: org.postgresql.Driver
-    schema: classpath:init-schema.sql
+#    schema: classpath:init-schema.sql
   sql:
     init:
       platform: postgres
