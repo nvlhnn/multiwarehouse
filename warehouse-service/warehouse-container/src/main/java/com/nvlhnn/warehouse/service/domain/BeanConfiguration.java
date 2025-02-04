@@ -16,15 +16,13 @@ public class BeanConfiguration {
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {  // Use WebMvcConfigurer instead of WebMvcConfigurerAdapter
+        return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000") // Specify your frontend's origin
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allowed HTTP methods
-                        .allowedHeaders("Authorization", "Content-Type") // Allowed headers
-                        .allowCredentials(true) // Allow credentials (cookies, authorization headers)
-                        .maxAge(3600); // Cache preflight response for 1 hour
+                        .allowedOrigins("*") // Allow all origins
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allow specific HTTP methods
+                        .allowedHeaders("*"); // Allow all headers
             }
         };
     }

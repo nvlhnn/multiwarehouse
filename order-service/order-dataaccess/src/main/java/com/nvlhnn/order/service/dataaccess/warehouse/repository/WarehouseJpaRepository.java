@@ -11,7 +11,7 @@ import java.util.UUID;
 @Repository
 public interface WarehouseJpaRepository extends JpaRepository<WarehouseEntity, UUID> {
 
-    @Query(value = "SELECT * FROM warehouses " +
+    @Query(value = "SELECT * FROM \"order\".warehouses " +
             "ORDER BY (6371 * ACOS(COS(RADIANS(:latitude)) * COS(RADIANS(latitude)) * COS(RADIANS(longitude) - RADIANS(:longitude)) + SIN(RADIANS(:latitude)) * SIN(RADIANS(latitude)))) ASC " +
             "LIMIT 1", nativeQuery = true)
     Optional<WarehouseEntity> findNearestLocation(double latitude, double longitude);

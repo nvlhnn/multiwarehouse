@@ -106,8 +106,25 @@ jobs:
             --zone ${{ secrets.GKE_CLUSTER_ZONE }} \
             --project ${{ secrets.GCP_PROJECT_ID }}
 
+      - name: Create Kubernetes Secrets db
+        run: |
+          kubectl create secret generic db-secrets \
+            --from-literal=ORDER_DB_URL=${{ secrets.ORDER_DB_URL }} \
+            --from-literal=WAREHOUSE_DB_URL=${{ secrets.WAREHOUSE_DB_URL }} \
+            --from-literal=USER_DB_URL=${{ secrets.USER_DB_URL }} \
+            --from-literal=PRODUCT_DB_URL=${{ secrets.PRODUCT_DB_URL }} \
+            --from-literal=SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
+            --from-literal=SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Create Kubernetes Secrets app
+        run: |
+          kubectl create secret generic app-secrets \
+            --from-literal=XENDIT_SECRET=${{ secrets.XENDIT_SECRET }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
       # Apply Kubernetes manifests
       - name: Apply Kubernetes Manifests
         run: |
           cd infrastructure/kubernetes/
-          kubectl replace -f application-deployment-with-postgre.yml
+          kubectl replace -f application-deployment-git-runner.yml

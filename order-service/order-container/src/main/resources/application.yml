@@ -15,7 +15,8 @@ order-service:
   payment-response-topic-name: payment-response
 
 xendit:
-  secret: xnd_development_1ozuayL7p7VSpc7rPXrGxbBUzy06zT4pAfMGHYxYWBHuLV4hSvwaaxzvluqXo5x
+  secret: ${XENDIT_SECRET}
+
 spring:
   jpa:
     open-in-view: false

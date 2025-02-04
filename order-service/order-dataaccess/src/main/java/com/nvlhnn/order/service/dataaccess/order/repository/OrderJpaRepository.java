@@ -38,7 +38,7 @@ public interface OrderJpaRepository extends JpaRepository<OrderEntity, UUID> {
     Page<OrderEntity> findByUserId(UUID userId, Pageable pageable);
 
     @Query(value = "SELECT DATE(o.created_at) AS orderDate, COUNT(o.id) AS totalOrders " +
-            "FROM orders o " +
+            "FROM \"order\".orders o " +
             "WHERE o.created_at BETWEEN :startDate AND :endDate " +
             "GROUP BY DATE(o.created_at) " +
             "ORDER BY DATE(o.created_at)", nativeQuery = true)
