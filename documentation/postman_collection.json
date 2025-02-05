@@ -1,0 +1,902 @@
+{
+	"info": {
+		"_postman_id": "ae2994ef-5afb-4e0e-96bc-81297090df95",
+		"name": "multiwarehouse",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24180400"
+	},
+	"item": [
+		{
+			"name": "Order Service",
+			"item": [
+				{
+					"name": "Pay",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"external_id\":\"88a863ad-d1bb-4f49-8e81-a74251df4a0d\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ORDER_URL}}/orders/pay",
+							"host": [
+								"{{ORDER_URL}}"
+							],
+							"path": [
+								"orders",
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Order Expiring",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ORDER_URL}}/orders/expiring",
+							"host": [
+								"{{ORDER_URL}}"
+							],
+							"path": [
+								"orders",
+								"expiring"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initiate Order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"customerId\": \"f2b84776-3259-4f39-b12b-64c02f51a72b\",\r\n  \"warehouseId\": \"08b8b2e4-831f-46ac-8cdb-9db3d99c789d\",  // Nearest warehouse (no stock)\r\n  \"latitude\": 37.7749,  // Latitude of the customer's location\r\n  \"longitude\": -122.4194, // Longitude of the customer's location\r\n  \"price\": 125000.00,\r\n  \"items\": [\r\n    {\r\n      \"productId\": \"a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424\",  // Product ID from stock data\r\n      \"quantity\": 6,  // 5 units are needed\r\n      \"price\": 25000,\r\n      \"subTotal\": 125000\r\n    }\r\n  ],\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"postalCode\": \"12345\",\r\n    \"city\": \"Metropolis\"\r\n  }\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ORDER_URL}}/orders",
+							"host": [
+								"{{ORDER_URL}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Customer's Orders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"sepatu1\",\r\n  \"price\": 20000\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ORDER_URL}}/orders?page=0",
+							"host": [
+								"{{ORDER_URL}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Order Statistic",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"sepatu1\",\r\n  \"price\": 20000\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ORDER_URL}}/orders/stats",
+							"host": [
+								"{{ORDER_URL}}"
+							],
+							"path": [
+								"orders",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Order",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"sepatu1\",\r\n  \"price\": 20000\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ORDER_URL}}/orders?page=0",
+							"host": [
+								"{{ORDER_URL}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product Service",
+			"item": [
+				{
+					"name": "Create Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "asdasd",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "100",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/ACER/OneDrive/Pictures/download (4).png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{PRODUCT_URL}}/products",
+							"host": [
+								"{{PRODUCT_URL}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Product",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PRODUCT_URL}}/products?page=0",
+							"host": [
+								"{{PRODUCT_URL}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "List Product",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"sepatu1\",\r\n  \"price\": 20000\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8185/products?page=0",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8185",
+									"path": [
+										"products"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/vnd.api.v1+json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 13 Dec 2024 04:00:07 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"products\": [\n        {\n            \"productId\": \"ab5f89ff-d3f7-4d47-9701-dff66e1b058b\",\n            \"name\": \"Product B\",\n            \"price\": 30,\n            \"totalStock\": 3,\n            \"message\": null\n        },\n        {\n            \"productId\": \"a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424\",\n            \"name\": \"Product A\",\n            \"price\": 50,\n            \"totalStock\": 3,\n            \"message\": null\n        }\n    ],\n    \"totalPages\": 1,\n    \"totalElements\": 2,\n    \"currentPage\": 0\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "User Service",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@gmail.com\",\r\n  \"name\": \"user\",\r\n  \"password\": \"11111111\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{USER_URL}}/users/register",
+							"host": [
+								"{{USER_URL}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"hanannnadmin@gmail.com\",\r\n  \"password\": \"11111111\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{USER_URL}}/users/login",
+							"host": [
+								"{{USER_URL}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Register User Copy",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"adm1in2@mail.com\",\r\n  \"password\": \"11111111\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8183/users/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8183",
+									"path": [
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/vnd.api.v1+json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 12 Dec 2024 02:59:04 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"userId\": \"32895111-b0ad-467c-b7e7-9204f1ddb0ba\",\n    \"name\": \"admi sn\",\n    \"email\": \"adm1in2@mail.com\",\n    \"role\": \"CUSTOMER\",\n    \"token\": \"eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOiIzMjg5NTExMS1iMGFkLTQ2N2MtYjdlNy05MjA0ZjFkZGIwYmEiLCJyb2xlIjoiQ1VTVE9NRVIiLCJzdWIiOiJhZG0xaW4yQG1haWwuY29tIiwiaWF0IjoxNzMzOTcyMzMxLCJleHAiOjE3MzU0NDM1NjB9.oEwMIEyWJyNq_a5VcvT-ou7TT2UnO7zERU1rityb2INMl2G6mAbbZ49ob6ySah4Njt72TfTc285xOFDhd49nGw\",\n    \"message\": \"User logged in successfully\",\n    \"active\": true\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Warehouse Service",
+			"item": [
+				{
+					"name": "List Warehouse Stock",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"sepatu1\",\r\n  \"price\": 20000\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{WAREHOUSE_URL}}/warehouses/stocks?warehouseId=a1f67b4a-9c07-45b7-bdb3-df3f9ed4327c&productId=a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424",
+							"host": [
+								"{{WAREHOUSE_URL}}"
+							],
+							"path": [
+								"warehouses",
+								"stocks"
+							],
+							"query": [
+								{
+									"key": "warehouseId",
+									"value": "a1f67b4a-9c07-45b7-bdb3-df3f9ed4327c"
+								},
+								{
+									"key": "productId",
+									"value": "a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "List Warehouse Stock",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"sepatu1\",\r\n  \"price\": 20000\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8181/warehouses/stocks?warehouseId=a1f67b4a-9c07-45b7-bdb3-df3f9ed4327c&productId=a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8181",
+									"path": [
+										"warehouses",
+										"stocks"
+									],
+									"query": [
+										{
+											"key": "warehouseId",
+											"value": "a1f67b4a-9c07-45b7-bdb3-df3f9ed4327c"
+										},
+										{
+											"key": "productId",
+											"value": "a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/vnd.api.v1+json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 13 Dec 2024 03:38:48 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"warehouseId\": \"a1f67b4a-9c07-45b7-bdb3-df3f9ed4327c\",\n    \"productId\": \"a7f4f1e0-b67f-4f62-a8b7-83c5cd35c424\",\n    \"quantity\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Warehouse",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"New Warehouse\",\r\n  \"warehouseAddress\": {\r\n    \"street\": \"123 Warehouse St\",\r\n    \"postalCode\": \"12345\",\r\n    \"city\": \"Warehouse City\",\r\n    \"latitude\": 40.7128,\r\n    \"longitude\": -74.0060\r\n  }\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{WAREHOUSE_URL}}/warehouses",
+							"host": [
+								"{{WAREHOUSE_URL}}"
+							],
+							"path": [
+								"warehouses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Stock",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productId\": \"c415b6f8-1234-4bcd-9def-67cd1234fb49\",\r\n    \"warehouseId\" : \"1a305799-4d65-4df8-98e7-73993786e896\",\r\n    \"quantity\": 152\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{WAREHOUSE_URL}}/warehouses/stocks",
+							"host": [
+								"{{WAREHOUSE_URL}}"
+							],
+							"path": [
+								"warehouses",
+								"stocks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Apply Stock",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productId\": \"c415b6f8-1234-4bcd-9def-67cd1234fb47\",\r\n    \"warehouseId\" : \"741d35b5-a879-46af-a0c1-54177383cb15\",\r\n    \"quantity\": -76\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{WAREHOUSE_URL}}/warehouses/stocks/apply",
+							"host": [
+								"{{WAREHOUSE_URL}}"
+							],
+							"path": [
+								"warehouses",
+								"stocks",
+								"apply"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Warehouse",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"sepatu1\",\r\n  \"price\": 20000\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{WAREHOUSE_URL}}/warehouses?page=0",
+							"host": [
+								"{{WAREHOUSE_URL}}"
+							],
+							"path": [
+								"warehouses"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "List Product Copy",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"sepatu1\",\r\n  \"price\": 20000\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8181/warehouses?page=0",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8181",
+									"path": [
+										"warehouses"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/vnd.api.v1+json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 13 Dec 2024 05:13:15 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"warehouses\": [\n        {\n            \"warehouseId\": \"f6d3cb47-1167-4d89-bb4e-bc82a3c9cbf9\",\n            \"name\": \"Warehouse A\",\n            \"city\": \"CityA\",\n            \"street\": \"123 Warehouse St\",\n            \"postalCode\": \"12345\",\n            \"latitude\": 40.712776,\n            \"longitude\": -74.005974,\n            \"active\": true\n        },\n        {\n            \"warehouseId\": \"a1f67b4a-9c07-45b7-bdb3-df3f9ed4327c\",\n            \"name\": \"Warehouse B\",\n            \"city\": \"CityB\",\n            \"street\": \"456 Market Ave\",\n            \"postalCode\": \"54321\",\n            \"latitude\": 34.052235,\n            \"longitude\": -118.243683,\n            \"active\": true\n        },\n        {\n            \"warehouseId\": \"12bba0d9-3c7e-4de5-977f-e8973e36d6b7\",\n            \"name\": \"Warehouse C\",\n            \"city\": \"CityC\",\n            \"street\": \"789 Logistics Blvd\",\n            \"postalCode\": \"98765\",\n            \"latitude\": 41.878113,\n            \"longitude\": -87.629799,\n            \"active\": true\n        },\n        {\n            \"warehouseId\": \"b226e6a8-8b56-4f91-8556-15fcb56691d5\",\n            \"name\": \"Warehouse D\",\n            \"city\": \"CityD\",\n            \"street\": \"101 Industrial Park\",\n            \"postalCode\": \"13579\",\n            \"latitude\": 29.760427,\n            \"longitude\": -95.369804,\n            \"active\": true\n        },\n        {\n            \"warehouseId\": \"8c6e2d75-2f26-431f-a812-bff7122c967f\",\n            \"name\": \"Warehouse E\",\n            \"city\": \"CityE\",\n            \"street\": \"202 Commerce Rd\",\n            \"postalCode\": \"24680\",\n            \"latitude\": 51.507351,\n            \"longitude\": -0.127758,\n            \"active\": true\n        }\n    ],\n    \"totalElements\": 5,\n    \"totalPages\": 1,\n    \"currentPage\": 0\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}
