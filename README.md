@@ -13,6 +13,8 @@ This application demonstrates a Java-based multi-warehouse e-commerce system bui
     - **User Service**: Handles user authentication.
     - **Warehouse Service**: Manages warehouses and their inventory.
     - **Order Service**: Handles order processing and status updates.
+- Frontend Repository : https://github.com/nvlhnn/Freshty
+
 
 System architecture images:
 
